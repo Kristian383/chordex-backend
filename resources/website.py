@@ -36,7 +36,18 @@ class Website(Resource):
             website.save_to_db()
         except:
             return {"message": "An error occured inserting the website."}, 500
-        return website.json(), 201
+        return {'message': 'Website inserted'}, 201
+
+    def delete(self, name):
+        item = WebsiteModel.find_by_name(name)
+        if item:
+            try:
+                item.delete_from_db()
+            except:
+                return {"message": "An error occured while deleting the website."}, 500
+
+        return {'message': 'Website deleted'}, 201
+
 
 class WebsiteList(Resource):
     def get(self):
