@@ -17,6 +17,7 @@ class ArtistModel(db.Model):
     def json(self):
         return {"name": self.name,
                 "total_songs": self.total_songs,
+                "artist_id": self.id,
                 "songs": [song.json() for song in self.songs.all()],
                 "order": self.order}
 
