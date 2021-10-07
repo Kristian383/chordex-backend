@@ -9,7 +9,7 @@ class SongModel(db.Model):
     # sve null moze osim name i artista
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
+    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))       #ovo artist prepoznaje jer je u artistModel to tablename?
 
     first_key = db.Column(db.String(30))
     first_chord_progression = db.Column(db.String(80))
