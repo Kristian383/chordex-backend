@@ -1,13 +1,15 @@
+from collections import UserList
 from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
 
 from security import authenticate, identity
 
-from resources.user import UserRegister, User
+from resources.user import UserRegister, User,UserList
 from resources.artist import Artist,ArtistList
 from resources.song import Song,SongList
 from resources.website import Website,WebsiteList
+from resources.user_notes import UserNotes
 
 from db import db
 
@@ -27,6 +29,7 @@ jwt = JWT(app, authenticate, identity)
 
 
 api.add_resource(UserRegister, "/register")
+api.add_resource(UserList, "/users")
 api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(ArtistList, "/artists")
 api.add_resource(Artist, "/artist/<string:name>")
@@ -35,6 +38,7 @@ api.add_resource(Song, "/song/<string:name>")
 
 api.add_resource(Website, "/website/<string:name>")
 api.add_resource(WebsiteList, "/websites")
+api.add_resource(UserNotes, "/notes/<string:username>")
 
 
 # api.add_resource(User, "/user/<string:username>")
