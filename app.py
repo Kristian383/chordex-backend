@@ -7,6 +7,7 @@ from security import authenticate, identity
 from resources.user import UserRegister, User
 from resources.artist import Artist,ArtistList
 from resources.song import Song,SongList
+from resources.website import Website,WebsiteList
 
 from db import db
 
@@ -31,6 +32,11 @@ api.add_resource(ArtistList, "/artists")
 api.add_resource(Artist, "/artist/<string:name>")
 api.add_resource(SongList, "/songs")
 api.add_resource(Song, "/song/<string:name>")
+
+api.add_resource(Website, "/website/<string:name>")
+api.add_resource(WebsiteList, "/websites")
+
+
 # api.add_resource(User, "/user/<string:username>")
 
 
