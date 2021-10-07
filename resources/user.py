@@ -68,4 +68,6 @@ class User(Resource):
     #     user.delete_from_db()
     #     return {"message": "User deleted"}, 200
 
-
+class UserList(Resource):
+    def get(self):
+        return {"users": [user.json() for user in UserModel.find_all()]}
