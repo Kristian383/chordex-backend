@@ -10,10 +10,17 @@ class UserModel(db.Model):
     email = db.Column(db.String(80),unique=True)
     password = db.Column(db.String(580))
 
+    number_of_songs=db.Column(db.Integer)
+    number_of_my_songs=db.Column(db.Integer)
+    number_of_artists=db.Column(db.Integer)
+
     def json(self):
         return {"username": self.username,
                 "id": self.id,
                 "email": self.email,
+                "number_of_songs": self.number_of_songs,
+                "number_of_my_songs": self.number_of_my_songs,
+                "number_of_artists": self.number_of_artists,
                 }
 
     def __init__(self, username, password,email):
