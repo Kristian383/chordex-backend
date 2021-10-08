@@ -120,5 +120,17 @@ class SongList(Resource):
 
 
 class UsersSongList(Resource):
-    def get(self, user_id):
+    parser = reqparse.RequestParser()
+    parser.add_argument('username',
+                        type=str,
+                        required=True,
+                        help="This field cannot be left blank!"
+                        )
+    def get(self, username):
+        #data = UsersSongList.parser.parse_args()
+        user = UserModel.find_by_username(username)
+        if not user:
+            return {"message": "User with that username doesn't exist"}, 400
+
+        user_id = UserModel.find_by_username(username).json()["id"]
         return {"songs": [song.json() for song in SongModel.find_all_user_songs(user_id)]}

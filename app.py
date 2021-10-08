@@ -6,7 +6,7 @@ from flask_jwt import JWT
 from security import authenticate, identity
 
 from resources.user import UserRegister, User,UserList
-from resources.artist import Artist,ArtistList
+from resources.artist import Artist,ArtistList,ArtistUserList
 from resources.song import Song,SongList, UsersSongList
 from resources.website import Website,WebsiteList
 from resources.user_notes import UserNotes,UserNotesList
@@ -31,15 +31,20 @@ jwt = JWT(app, authenticate, identity)
 api.add_resource(UserRegister, "/register")
 api.add_resource(UserList, "/users")
 api.add_resource(User, "/user/<int:user_id>")
+
 api.add_resource(ArtistList, "/artists")
+api.add_resource(ArtistUserList, "/artists/<string:username>")    #ispisuje sve pjesme artista odredenog usera
 api.add_resource(Artist, "/artist/<string:name>")
+
 api.add_resource(SongList, "/songs")
-api.add_resource(UsersSongList, "/songs/<int:user_id>")
+api.add_resource(UsersSongList, "/songs/<string:username>")
 api.add_resource(Song, "/song/<string:username>")
 # api.add_resource(Song, "/song/<int:user_id>")
 
-api.add_resource(Website, "/website/<string:name>")
-api.add_resource(WebsiteList, "/websites")
+api.add_resource(Website, "/website/<string:name>")      #ovo makniti
+api.add_resource(WebsiteList, "/websites/<string:username>")
+#api.add_resource(WebsiteList, "/websites")
+
 api.add_resource(UserNotesList, "/notes")
 api.add_resource(UserNotes, "/notes/<string:username>")
 

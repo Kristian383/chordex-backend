@@ -35,3 +35,7 @@ class WebsiteModel(db.Model):
     def find_all(cls):
         return cls.query.all()
 
+    @classmethod
+    def find_all_users_websites(cls,user_id):
+        return cls.query.filter_by(user_id=user_id)
+

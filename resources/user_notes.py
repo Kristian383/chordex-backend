@@ -29,7 +29,7 @@ class UserNotes(Resource):
 
         if notes:
             return notes.json()
-        return user_id
+        return {"message": "User has no notes"},200
 
     # def post(self, username):
 

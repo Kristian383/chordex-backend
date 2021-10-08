@@ -111,6 +111,10 @@ class SongModel(db.Model):
     def find_all_user_songs(cls,user_id):
         return cls.query.filter_by(user_id=user_id)
 
+    @classmethod
+    def find_all_user_songs_by_artist(cls,user_id,artist_id):
+        return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id)
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

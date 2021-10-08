@@ -23,12 +23,18 @@ class Website(Resource):
                         )
 
     def get(self, name):
+        data = Website.parser.parse_args()
+        user = UserModel.find_by_username(data["username"])
+        if not user:
+            return {"message": "User with that username doesn't exist"}, 400
 
-        website = WebsiteModel.find_by_name(name)
+        user_id = UserModel.find_by_username(data["username"]).json()["id"]
+
+        website = WebsiteModel.find_by_name(name,user_id)
 
         if website:
             return website.json()
-        return name
+        return {"message": "User websites empty."},200
 
     def post(self, name):
         data = Website.parser.parse_args()
@@ -73,5 +79,18 @@ class Website(Resource):
 
 
 class WebsiteList(Resource):
-    def get(self):
+    parser = reqparse.RequestParser()
+    parser.add_argument('username',
+                        type=str,
+                        required=True,
+                        help="This field cannot be left blank!"
+                        )
+    def get(self,username):
+        data = WebsiteList.parser.parse_args()
+        user = UserModel.find_by_username(username)
+        if not user:
+            return {"message": "User with that username doesn't exist"}, 400
+
+        user_id = UserModel.find_by_username(data["username"]).json()["id"]
+
         return {"websites": [website.json() for website in WebsiteModel.find_all()]}
