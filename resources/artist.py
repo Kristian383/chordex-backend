@@ -50,3 +50,8 @@ class Artist(Resource):
 class ArtistList(Resource):
     def get(self):
         return {"artists": [artist.json() for artist in ArtistModel.find_all()]}
+
+
+class ArtistUser(Resource):
+    def get(self):
+        pass
