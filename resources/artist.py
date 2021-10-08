@@ -36,7 +36,9 @@ class Artist(Resource):
 
         if artist:
             return artist.json()
-        return data
+            
+        return {"message": "No songs by artist {}".format(name)}, 400
+
 
     def post(self, name):
         data = Artist.parser.parse_args()
