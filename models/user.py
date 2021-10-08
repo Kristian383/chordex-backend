@@ -3,12 +3,15 @@ from db import db
 from werkzeug.security import generate_password_hash
 
 class UserModel(db.Model):
-    __tablename__ = "users"
+    __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80))
     email = db.Column(db.String(80),unique=True)
     password = db.Column(db.String(580))
+
+    songs=db.relationship("SongModel",lazy="dynamic")
+    websites=db.relationship("WebsiteModel",lazy="dynamic")
 
     number_of_songs=db.Column(db.Integer)
     number_of_my_songs=db.Column(db.Integer)
@@ -18,6 +21,8 @@ class UserModel(db.Model):
         return {"username": self.username,
                 "id": self.id,
                 "email": self.email,
+                "songs":[song.json() for song in self.songs.all()],
+                "websites":[website.json() for website in self.websites.all()],
                 "number_of_songs": self.number_of_songs,
                 "number_of_my_songs": self.number_of_my_songs,
                 "number_of_artists": self.number_of_artists,
