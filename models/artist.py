@@ -22,9 +22,9 @@ class ArtistModel(db.Model):
                 "order": self.order}
 
     @classmethod
-    def find_by_name(cls, name):
+    def find_by_name(cls, name,user_id):
         # "SELECT * FROM items WHERE name=name LIMIT 1"
-        return cls.query.filter_by(name=name).first()
+        return cls.query.filter_by(user_id=user_id).filter_by(name=name).first()
 
     @classmethod
     def find_all(cls):
