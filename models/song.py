@@ -1,4 +1,5 @@
 
+from sqlalchemy.sql.functions import user
 from db import db
 from sqlalchemy.sql import func
 
@@ -8,14 +9,15 @@ class SongModel(db.Model):
 
     # sve null moze osim name i artista
     id = db.Column(db.Integer, primary_key=True)
+    user_id=db.Column(db.Integer, db.ForeignKey("user.id"),nullable=False) 
     name = db.Column(db.String(80))
     artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))       #ovo artist prepoznaje jer je u artistModel to tablename?
 
     first_key = db.Column(db.String(30))
     first_chord_progression = db.Column(db.String(80))
-    # first_key_notes = db.Column(db.String(80))       #ovo imamo na frontendu
     second_key = db.Column(db.String(80))
     second_chord_progression = db.Column(db.String(80))
+    # first_key_notes = db.Column(db.String(80))       #ovo imamo na frontendu
     # second_key_notes = db.Column( #  db.String(80), db.ForeignKey("musickey.notes"))    #ovo imamo na frontendu
 
     learned_prcntg = db.Column(db.Integer)
@@ -35,6 +37,7 @@ class SongModel(db.Model):
 
     def __init__(self, name,
                  artist_id,
+                 user_id,
                  first_key=None,
                  first_chord_progression=None,
                  second_key=None,
@@ -50,10 +53,12 @@ class SongModel(db.Model):
                  acoustic=None,
                  electric=None,
                  difficulty=None,
+                 
                  last_viewed=None,
                  ):
         self.name = name
         self.artist_id = artist_id
+        self.user_id = user_id
         self.first_key = first_key
         self.first_chord_progression = first_chord_progression
         self.second_key = second_key
@@ -74,6 +79,7 @@ class SongModel(db.Model):
     def json(self):
         return {"name": self.name,
                 "artist_id": self.artist_id,
+                "user_id": self.user_id,
                 "first_key": self.first_key,
                 "first_chord_progression": self.first_chord_progression,
                 "second_key": self.second_key,
@@ -93,13 +99,17 @@ class SongModel(db.Model):
                 }
 
     @classmethod
-    def find_by_name(cls, name):
-        # "SELECT * FROM items WHERE name=name LIMIT 1"
-        return cls.query.filter_by(name=name).first()
+    def find_by_name(cls, name,user_id):
+        # "SELECT * FROM items WHERE name=name LIMIT 1" 
+        return cls.query.filter_by(user_id=user_id).filter_by(name=name).first()
 
     @classmethod
     def find_all(cls):
         return cls.query.all()
+
+    @classmethod
+    def find_all_user_songs(cls,user_id):
+        return cls.query.filter_by(user_id=user_id)
 
     def save_to_db(self):
         db.session.add(self)
