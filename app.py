@@ -33,15 +33,15 @@ api.add_resource(UserList, "/users")
 api.add_resource(User, "/user/<int:user_id>")
 
 api.add_resource(ArtistList, "/artists")
-api.add_resource(ArtistUserList, "/artists/<string:username>")    #ispisuje sve pjesme artista odredenog usera
-api.add_resource(Artist, "/artist/<string:name>")
+api.add_resource(ArtistUserList, "/artists/<string:username>")    #ispisuje sve artiste i pjesme odredenog usera
+api.add_resource(Artist, "/artist/<string:name>")                      #ispisuje sve pjesme artista odredenog usera
 
 api.add_resource(SongList, "/songs")
 api.add_resource(UsersSongList, "/songs/<string:username>")
 api.add_resource(Song, "/song/<string:username>")
 # api.add_resource(Song, "/song/<int:user_id>")
 
-api.add_resource(Website, "/website/<string:name>")      #ovo makniti
+#api.add_resource(Website, "/website/<string:name>")      #ovo makniti
 api.add_resource(WebsiteList, "/websites/<string:username>")
 #api.add_resource(WebsiteList, "/websites")
 
