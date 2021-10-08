@@ -93,6 +93,9 @@ class ArtistUserList(Resource):
 
         artist = ArtistModel.find_by_name(data["artist"], user_id)
 
-        #check if there is artist
+        if artist is None:
+            return {'message': "An artist with name '{}' doesn't exist.".format(data["artist"])}, 400
 
-        return {"artists": [artist.json() for artist in SongModel.find_all_user_songs_by_artist(user_id,artist.id)]}
+        return {"songs": [song.json() for song in SongModel.find_all_user_songs_by_artist(user_id,artist.id)],
+        "artist":artist.name
+        } #vraca all songs by artist
