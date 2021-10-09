@@ -7,7 +7,7 @@ from models.user import UserModel
 
 class Artist(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('name',
+    parser.add_argument('artist',
                         type=str,
                         required=True,
                         help="This field cannot be left blank!"
@@ -24,6 +24,7 @@ class Artist(Resource):
     #                     )
 
     # @jwt_required()
+    #nece nam trebati ovo 
     def get(self, name):
         data = Artist.parser.parse_args()
         user = UserModel.find_by_username(data["username"])
@@ -77,12 +78,25 @@ class Artist(Resource):
         return {'message': 'Artist deleted'}
 
 
-class ArtistList(Resource):
+class ArtistList(Resource): #get all users artists     with their songs
+    parser = reqparse.RequestParser()
+    parser.add_argument('username',
+                        type=str,
+                        required=True,
+                        help="This field cannot be left blank!"
+                        )
     def get(self):
-        return {"artists": [artist.json() for artist in ArtistModel.find_all()]}
+        data = ArtistList.parser.parse_args()
+        user = UserModel.find_by_username(data["username"])
+        if not user:
+            return {"message": "User with that username doesn't exist"}, 400
+
+        user_id = UserModel.find_by_username(data["username"]).json()["id"]
+
+        return {"artists": [artist.json() for artist in ArtistModel.find_all(user_id)]}
 
 
-class ArtistUserList(Resource):
+class ArtistUserList(Resource):       #ovo vraca pjesme jednog artista 
     parser = reqparse.RequestParser()
     parser.add_argument('username',
                         type=str,
