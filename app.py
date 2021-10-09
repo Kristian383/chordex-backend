@@ -45,7 +45,7 @@ api.add_resource(Website, "/website/<string:username>")      #ovo sluzi za ubaci
 api.add_resource(WebsiteList, "/websites/<string:username>") #dohvacanje svih websiteova od usera
 #api.add_resource(WebsiteList, "/websites")
 
-api.add_resource(UserNotesList, "/notes")
+#api.add_resource(UserNotesList, "/notes")   #provjera za developera
 api.add_resource(UserNotes, "/notes/<string:username>")
 
 
