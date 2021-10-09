@@ -21,6 +21,11 @@ class Song(Resource):
                         required=True,
                         help="This field cannot be left blank!"
                         )
+    parser.add_argument('first_key',
+                        type=str,
+                        required=True,
+                        help="This field cannot be left blank!"
+                        )
 
     def get(self, name, username):
         user = UserModel.find_by_username(username)
@@ -55,8 +60,7 @@ class Song(Resource):
             try:
                 artist.save_to_db()
             except:
-                return {"message": "An error occured inserting an artist."}, 500 
-            #return {"arist": artist.json()}
+                return {"message": "An error occured inserting an artist."}, 500
 
         song = SongModel(data["name"], artist.id, user_id)
         try:
@@ -64,9 +68,6 @@ class Song(Resource):
         except:
             return {"message": "An error occured inserting a song."}, 500
         return song.json(), 201
-
-        # return {"message":"found artist id '{}'".format(song.json())}
-        # find artist id from database to make song object
 
     def delete(self,  username):
         # omoguciti kaskadno brisanje artista ako nema vise pjesama
@@ -82,12 +83,13 @@ class Song(Resource):
         if song:
             try:
                 song.delete_from_db()
+                return {'message': 'Song deleted'}
             except:
                 return {"message": "An error occured deleting the song."}, 500
+        else:
+            return {'message': 'Song doesnt exist'}, 400
 
-        return {'message': 'Song deleted'}
-
-    def put(self, name, username):
+    def put(self, username):
         data = Song.parser.parse_args()
 
         user = UserModel.find_by_username(username)
@@ -97,19 +99,22 @@ class Song(Resource):
 
         user_id = UserModel.find_by_username(username).json()["id"]
 
-        song = SongModel.find_by_name(name, user_id)
+        song = SongModel.find_by_name(data["name"], user_id)
 
         if song is None:
+            artist = ArtistModel.find_by_name(data["artist"], user_id)
             # ili data["price"], data["store_id"]
-            song = SongModel(name, **data)
+            song = SongModel(data["name"], artist.id, user_id)
         else:
             # song.price = data["price"]
             # update the song
-            pass
+            song.first_key = data["first_key"]
 
-        song.save_to_db()
-
-        return song.json()
+        try:
+            song.save_to_db()
+            return {'message': 'Song updated', "updated": song.json()}, 200
+        except:
+            return {"message": "An error occured deleting the song."}, 500
 
 
 class SongList(Resource):
