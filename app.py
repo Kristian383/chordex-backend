@@ -32,8 +32,8 @@ api.add_resource(UserRegister, "/register")
 api.add_resource(UserList, "/users")
 api.add_resource(User, "/user/<int:user_id>")
 
-api.add_resource(ArtistList, "/artists")
-api.add_resource(ArtistUserList, "/artists/<string:username>")    #ispisuje sve artiste i pjesme odredenog usera
+api.add_resource(ArtistList, "/artists")                #vraca sve userove artiste s pjesmama  
+api.add_resource(ArtistUserList, "/artist/<string:username>")    #ispisuje sve pjesme odredenog artista   (za odredenog usera)
 api.add_resource(Artist, "/artist/<string:name>")                      #ispisuje sve pjesme artista odredenog usera
 
 api.add_resource(SongList, "/songs")
