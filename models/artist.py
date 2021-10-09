@@ -27,12 +27,14 @@ class ArtistModel(db.Model):
     __tablename__ = "artist"
     
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    songs = db.relationship("SongModel",lazy="dynamic")  # this will be list of different songs         #llazy dynamic omogucuje songs.all()
-    total_songs = db.Column(db.Integer)
-    order = db.Column(db.Integer)
-
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    name = db.Column(db.String(80))
+
+    songs = db.relationship("SongModel",lazy="dynamic", cascade="all")  # kada obrsiemo artista micu se sve pjesme         #llazy dynamic omogucuje songs.all()
+    total_songs = db.Column(db.Integer)
+
+    order = db.Column(db.Integer)
 
     def __init__(self, name,user_id):
         self.name = name
