@@ -41,8 +41,8 @@ api.add_resource(UsersSongList, "/songs/<string:username>")
 api.add_resource(Song, "/song/<string:username>")
 # api.add_resource(Song, "/song/<int:user_id>")
 
-#api.add_resource(Website, "/website/<string:name>")      #ovo makniti
-api.add_resource(WebsiteList, "/websites/<string:username>")
+api.add_resource(Website, "/website/<string:username>")      #ovo sluzi za ubacivanje webvssite linkova 
+api.add_resource(WebsiteList, "/websites/<string:username>") #dohvacanje svih websiteova od usera
 #api.add_resource(WebsiteList, "/websites")
 
 api.add_resource(UserNotesList, "/notes")
