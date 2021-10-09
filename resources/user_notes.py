@@ -13,23 +13,29 @@ class UserNotes(Resource):
                         )
     parser.add_argument('notes',
                         type=str,
-                        required=True,
+                        # required=True,
                         help="This field cannot be left blank!"
                         )
     parser.add_argument('txt_area_height',
                         type=str,
-                        required=True,
+                        # required=True,
                         help="This field cannot be left blank!"
                         )
 
     def get(self, username):
         # ovdje slati username name?
-        user_id = UserModel.find_by_username(username).json()["id"]
-        notes = UserNotesModel.find_by_userId(user_id)
+        user = UserModel.find_by_username(username)
 
-        if notes:
-            return notes.json()
-        return {"message": "User has no notes"},200
+        if not user:
+            return {"message": "User with that username doesn't exist"}, 400
+
+        user_id = UserModel.find_by_username(username).json()["id"]
+
+        user_notes = UserNotesModel.find_by_userId(user_id)
+
+        if user_notes:
+            return user_notes.json()
+        return {"message": "User has no notes"}, 200
 
     # def post(self, username):
 
@@ -53,7 +59,7 @@ class UserNotes(Resource):
     #         return {"message": "An error occured inserting a notes."}, 500
     #     return {"message": "Note created."}, 201
 
-    def put(self,username):
+    def put(self, username):
         data = UserNotes.parser.parse_args()
 
         user = UserModel.find_by_username(username)
@@ -63,33 +69,31 @@ class UserNotes(Resource):
 
         user_id = UserModel.find_by_username(username).json()["id"]
 
-        user_notes=UserNotesModel.find_by_userId(user_id)
+        user_notes = UserNotesModel.find_by_userId(user_id)
 
         if user_notes is None:
-            user_notes=UserNotesModel(user_id,data["notes"],data["txt_area_height"])
+            user_notes = UserNotesModel(
+                user_id, data["notes"], data["txt_area_height"])
         else:
-            user_notes.notes=data["notes"]
-            user_notes.txt_area_height=data["txt_area_height"]
-            user_notes.save_to_db()
-            
+            user_notes.notes = data["notes"]
+            user_notes.txt_area_height = data["txt_area_height"]
 
         try:
             user_notes.save_to_db()
         except:
             return {"message": "An error occured inserting a notes."}, 500
-        # return {"message": "Note created."}, 201
         return user_notes.json(), 201
 
-
+    # ovo zapravo necemo moci deletati, jedino kad se user makne
     def delete(self, username):
         user = UserModel.find_by_username(username)
 
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
-        
+
         user_id = UserModel.find_by_username(username).json()["id"]
 
-        note=UserNotesModel.find_by_userId(user_id)
+        note = UserNotesModel.find_by_userId(user_id)
         try:
             note.delete_from_db()
         except:
@@ -99,6 +103,6 @@ class UserNotes(Resource):
         # return {"message": "User created successfully"}, 201
 
 
-class UserNotesList(Resource):
+class UserNotesList(Resource): #/notes
     def get(self):
         return {"notes": [note.json() for note in UserNotesModel.find_all()]}
