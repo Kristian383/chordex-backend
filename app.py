@@ -25,7 +25,7 @@ api = Api(app)
 def create_tables():
     db.create_all()
 
-jwt = JWT(app, authenticate, identity)
+jwt = JWT(app, authenticate, identity)             # vraca access token
 
 
 api.add_resource(UserRegister, "/register")
