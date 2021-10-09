@@ -58,6 +58,10 @@ class ArtistModel(db.Model):
     def find_all(cls):
         return cls.query.all()
 
+    @classmethod
+    def find_all(cls,user_id):
+        return cls.query.filter_by(user_id=user_id)
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
