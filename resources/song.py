@@ -82,8 +82,13 @@ class Song(Resource):
         song = SongModel.find_by_name(data["name"], user_id)
         if song:
             try:
+                artist = ArtistModel.find_by_name(data["artist"], user_id)
                 song.delete_from_db()
-                return {'message': 'Song deleted'}
+                if len(artist.check_songs()) == 0:
+                    artist.delete_from_db()
+                    return {"message": "Song and Artist deleted"}, 200
+                
+                return {'message': 'Song deleted'}, 200
             except:
                 return {"message": "An error occured deleting the song."}, 500
         else:
