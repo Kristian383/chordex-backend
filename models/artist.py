@@ -48,6 +48,8 @@ class ArtistModel(db.Model):
                 "songs": [song.json() for song in self.songs.all()],
                 "order": self.order
                 }
+    def check_songs(self):
+        return   [song.json() for song in self.songs.all()]
 
     @classmethod
     def find_by_name(cls, name,user_id):
