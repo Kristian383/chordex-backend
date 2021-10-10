@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 from models.song import SongModel
 from models.artist import ArtistModel
 from models.user import UserModel
-
+from flask_jwt_extended import jwt_required
 
 class Song(Resource):
     parser = reqparse.RequestParser()
@@ -134,7 +134,7 @@ class UsersSongList(Resource):
                         required=True,
                         help="This field cannot be left blank!"
                         )
-
+    @jwt_required()
     def get(self, username):
         #data = UsersSongList.parser.parse_args()
         user = UserModel.find_by_username(username)
