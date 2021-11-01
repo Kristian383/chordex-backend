@@ -43,7 +43,7 @@ class UserRegister(Resource):
 
         data = UserRegister.parser.parse_args()
 
-        if UserModel.find_by_username(data["username"]):
+        if UserModel.find_by_username(data["username"]) and UserModel.find_by_email(data["email"]):
             return {"message": "User with that username already exists"}, 400
 
         user = UserModel(**data)
@@ -83,16 +83,17 @@ class UserLogin(Resource):
                         required=True,
                         help="This field cannot be left blank!"
                         )
-    parser.add_argument('username',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
+    # parser.add_argument('username',
+    #                     type=str,
+    #                     required=True,
+    #                     help="This field cannot be left blank!"
+    #                     )
 
     def post(self):
         data = UserLogin.parser.parse_args()
 
-        user = UserModel.find_by_username(data['username'])
+        # user = UserModel.find_by_username(data['username'])
+        user = UserModel.find_by_email(data['email'])
 
         # this is what the `authenticate()` function did in security.py
 
@@ -118,6 +119,12 @@ class UserLogout(Resource):
         BLOCKLIST.add(jti)
         return {"message": "Successfully logged out"}, 200
 
+# class TokenRefresh(Resource):
+#     @jwt_refresh_token_required
+#     def post(self):
+#         current_user = get_jwt_identity()
+#         new_token = create_access_token(identity=current_user, fresh=False)
+#         return {"access_token": new_token}, 200
 
 class UserList(Resource):
     def get(self):
