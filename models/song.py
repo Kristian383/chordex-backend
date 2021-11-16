@@ -3,16 +3,20 @@ from sqlalchemy.sql.functions import user
 from db import db
 from sqlalchemy.sql import func
 
+from models.artist import ArtistModel
 
+
+    
 class SongModel(db.Model):
     __tablename__ = "song"
 
     # sve null moze osim name i artista
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    
-    user_id=db.Column(db.Integer, db.ForeignKey("user.id"),nullable=False) 
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))       #ovo artist prepoznaje jer je u artistModel to tablename?
+
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    # ovo artist prepoznaje jer je u artistModel to tablename?
+    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
 
     first_key = db.Column(db.String(30))
     first_chord_progression = db.Column(db.String(80))
@@ -32,6 +36,7 @@ class SongModel(db.Model):
     acoustic = db.Column(db.Boolean)
     electric = db.Column(db.Boolean)
     difficulty = db.Column(db.String(80))
+    tuning = db.Column(db.String(50))
 
     # sql alchemy kreira date automatski, ali ovo treba u put azurirati
     # last_viewed = db.Column(db.DateTime(timezone=True), default=func.now())
@@ -54,8 +59,8 @@ class SongModel(db.Model):
                  acoustic=None,
                  electric=None,
                  difficulty=None,
-                 
-                 last_viewed=None,
+                 tuning="standard"
+                 #  last_viewed=None,
                  ):
         self.name = name
         self.artist_id = artist_id
@@ -75,50 +80,69 @@ class SongModel(db.Model):
         self.electric = electric
         self.difficulty = difficulty
         self.capo = capo
+        self.tuning = tuning
         # self.last_viewed = last_viewed
 
     def json(self):
-        return {"name": self.name,
-                "artist_id": self.artist_id,
-                "user_id": self.user_id,
-                "first_key": self.first_key,
-                "first_chord_progression": self.first_chord_progression,
-                "second_key": self.second_key,
-                "second_chord_progression": self.second_chord_progression,
-                "learned_prcntg": self.learned_prcntg,
-                "is_favorite": self.is_favorite,
-                "is_my_song": self.is_my_song,
+        return {"songName": self.name,
+                "songId": self.id,
+                "artistId": self.artist_id,
+                "userId": self.user_id,
+                "firstKey": self.first_key,
+                "firstChordProgression": self.first_chord_progression,
+                "secondKey": self.second_key,
+                "secondChordProgression": self.second_chord_progression,
+                "practicedPrcntg": self.learned_prcntg,
+                "isFavorite": self.is_favorite,
+                "isMySong": self.is_my_song,
                 "bpm": self.bpm,
-                "song_text": self.song_text,
-                "yt_link": self.yt_link,
-                "chords_website_link": self.chords_website_link,
+                "songText": self.song_text,
+                "ytLink": self.yt_link,
+                "chordsWebsiteLink": self.chords_website_link,
                 "acoustic": self.acoustic,
                 "electric": self.electric,
                 "difficulty": self.difficulty,
                 "capo": self.capo,
+                "tuning": self.tuning,
                 # "last_viewed": self.last_viewed
                 }
 
+
+    # @classmethod
+    # def find_artist_name(cls):
+    #     name=ArtistModel.query.all() 
+    #     return  name
+        #().filter_by(id=artist_id).first()
+        
+    #poboljšati da je moguce ista pjesma ali razliciti artisti 
     @classmethod
-    def find_by_name(cls, name,user_id):
-        # "SELECT * FROM items WHERE name=name LIMIT 1" 
+    def find_by_name(cls, name, user_id):
+        # "SELECT * FROM items WHERE name=name LIMIT 1"
         return cls.query.filter_by(user_id=user_id).filter_by(name=name).first()
+    
+    @classmethod
+    def find_by_id(cls, song_id,user_id):
+        return cls.query.filter_by(user_id=user_id).filter_by(id=song_id).first()
 
     @classmethod
     def find_all(cls):
         return cls.query.all()
 
     @classmethod
-    def find_all_user_songs(cls,user_id):
+    def find_all_user_songs(cls, user_id):
         return cls.query.filter_by(user_id=user_id)
 
     @classmethod
-    def find_all_user_my_songs(cls,user_id):
+    def find_all_user_my_songs(cls, user_id):
         return cls.query.filter_by(user_id=user_id).filter_by(is_my_song=True)
 
     @classmethod
-    def find_all_user_songs_by_artist(cls,user_id,artist_id):
+    def find_all_user_songs_by_artist(cls, user_id, artist_id):
         return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id)
+
+    @classmethod
+    def count_all_user_songs_by_artist(cls, user_id, artist_id):
+        return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).count()
 
     def save_to_db(self):
         db.session.add(self)
