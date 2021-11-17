@@ -5,6 +5,8 @@ from models.song import SongModel
 from models.artist import ArtistModel
 from models.user import UserModel
 from flask_jwt_extended import jwt_required
+from flask import request
+
 import json
 
 
@@ -41,7 +43,7 @@ class MusicKeys(Resource):
         {"key": "Cb", "relativeMinor": "Ab", "notes": ["Cb", "Db", "Eb", "Fb", "Gb", "Ab", "Bb"]}]
 
     def get(self):
-        return  {"musicKeys":self.musicKeys}
+        return {"musicKeys": self.musicKeys}
 
 
 class Song(Resource):
@@ -62,6 +64,16 @@ class Song(Resource):
                         help="This field cannot be left blank!"
                         )
     parser.add_argument('firstKey',
+                        type=str,
+                        required=False,
+                        help="This field cannot be left blank!"
+                        )
+    parser.add_argument('firstKeyNotes',
+                        type=str,
+                        required=False,
+                        help="This field cannot be left blank!"
+                        )
+    parser.add_argument('secondKeyNotes',
                         type=str,
                         required=False,
                         help="This field cannot be left blank!"
@@ -190,8 +202,10 @@ class Song(Resource):
 
         song = SongModel(data["songName"], artist.id, user.id,
                          data["firstKey"],
+                         data["firstKeyNotes"],
                          data["firstChordProgression"],
                          data["secondKey"],
+                         data["secondKeyNotes"],
                          data["secondChordProgression"],
                          data["practicedPrcntg"],
                          data["isFavorite"],
@@ -243,8 +257,10 @@ class Song(Resource):
         else:
             song.name = data["songName"]
             song.first_key = data["firstKey"]
+            song.first_notes = data["firstKeyNotes"]
             song.first_chord_progression = data["firstChordProgression"]
             song.second_key = data["secondKey"]
+            song.second_key_notes = data["secondKeyNotes"]
             song.second_chord_progression = data["secondChordProgression"]
             song.learned_prcntg = data["practicedPrcntg"]
             song.is_favorite = data["isFavorite"]
@@ -300,16 +316,18 @@ class UsersSongList(Resource):
                         required=True,
                         help="This field cannot be left blank!"
                         )
+    
 
     # @jwt_required()
     def get(self, username):
-        # data = UsersSongList.parser.parse_args()
+        #data = UsersSongList.parser.parse_args()
+        numOfLoads = int(request.args["numOfLoads"])
         user = UserModel.find_by_username(username)
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
-
+        #return {"numOfLoads":queryStringRaw}
         songs = [song.json()
-                 for song in SongModel.find_all_user_songs(user.id)]
+                 for song in SongModel.find_all_user_songs(user.id,numOfLoads)]
 
         # artists=[]
         for song in songs:

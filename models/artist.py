@@ -62,8 +62,11 @@ class ArtistModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find_all(cls,user_id):
-        return cls.query.filter_by(user_id=user_id)
+    def find_all_user_artists(cls,user_id,load_number):
+        skip=0
+        if load_number!=1:
+            skip=(load_number-1)*2
+        return cls.query.filter_by(user_id=user_id).limit(2).offset(skip)
 
     def save_to_db(self):
         db.session.add(self)

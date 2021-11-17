@@ -1,5 +1,6 @@
 
 # import sqlite3
+from flask_jwt_extended.utils import get_jti
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 
@@ -12,7 +13,9 @@ from flask_jwt_extended import (
     get_jwt_identity,
     set_access_cookies,
     set_refresh_cookies,
-    unset_jwt_cookies
+    unset_jwt_cookies,
+    get_unverified_jwt_headers
+
 
 )
 
@@ -110,7 +113,6 @@ class UserLogin(Resource):
         # user = UserModel.find_by_username(data['username'])
         user = UserModel.find_by_email(data['email'])
 
-        
         # if user and safe_str_cmp(user.password, data['password']):
         if user and check_password_hash(user.password, data['password']):
             access_token = create_access_token(
@@ -125,8 +127,10 @@ class UserLogin(Resource):
             # set_access_cookies(response, access_token)
             # set_refresh_cookies(response, refresh_token)
             # response.headers.add('Access-Control-Allow-Origin', '*')
+
             return {"token": access_token,
-                    "user": user.username}, 200
+                    "user": user.username
+                    }, 200
 
         return {"message": "Invalid Credentials!"}, 401
 

@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required
 from models.artist import ArtistModel
 from models.user import UserModel
+from flask import request
 
 
 class Artist(Resource):
@@ -80,20 +81,21 @@ class Artist(Resource):
 
 class ArtistList(Resource): #get all users artists     with their songs
     parser = reqparse.RequestParser()
-    parser.add_argument('username',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
-    def get(self):
-        data = ArtistList.parser.parse_args()
-        user = UserModel.find_by_username(data["username"])
+    # parser.add_argument('username',
+    #                     type=str,
+    #                     required=True,
+    #                     help="This field cannot be left blank!"
+    #                     )
+    def get(self,username):
+        # data = ArtistList.parser.parse_args()
+        #user = UserModel.find_by_username(data["username"])
+        numOfLoads = int(request.args["numOfLoads"])
+        user = UserModel.find_by_username(username)
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
 
-        user_id = UserModel.find_by_username(data["username"]).json()["id"]
 
-        return {"artists": [artist.json() for artist in ArtistModel.find_all(user_id)]}
+        return {"artists": [artist.json() for artist in ArtistModel.find_all_user_artists(user.id,numOfLoads)]}
 
 
 class ArtistUserList(Resource):       #ovo vraca pjesme jednog artista 
@@ -108,7 +110,7 @@ class ArtistUserList(Resource):       #ovo vraca pjesme jednog artista
                         required=True,
                         help="This field cannot be left blank!"
                         )
-    @jwt_required()
+    # @jwt_required()
     def get(self, username):
         data = ArtistUserList.parser.parse_args()
         user = UserModel.find_by_username(username)

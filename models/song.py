@@ -19,11 +19,11 @@ class SongModel(db.Model):
     artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
 
     first_key = db.Column(db.String(30))
+    first_key_notes = db.Column(db.String(80))
     first_chord_progression = db.Column(db.String(80))
     second_key = db.Column(db.String(80))
+    second_key_notes = db.Column(db.String(80))
     second_chord_progression = db.Column(db.String(80))
-    # first_key_notes = db.Column(db.String(80))       #ovo imamo na frontendu
-    # second_key_notes = db.Column( #  db.String(80), db.ForeignKey("musickey.notes"))    #ovo imamo na frontendu
 
     learned_prcntg = db.Column(db.Integer)
     is_favorite = db.Column(db.Boolean)
@@ -45,8 +45,10 @@ class SongModel(db.Model):
                  artist_id,
                  user_id,
                  first_key=None,
+                 first_key_notes=None,
                  first_chord_progression=None,
                  second_key=None,
+                 second_key_notes=None,
                  second_chord_progression=None,
                  learned_prcntg=None,
                  is_favorite=None,
@@ -59,15 +61,17 @@ class SongModel(db.Model):
                  acoustic=None,
                  electric=None,
                  difficulty=None,
-                 tuning="standard"
+                 tuning=None,
                  #  last_viewed=None,
                  ):
         self.name = name
         self.artist_id = artist_id
         self.user_id = user_id
         self.first_key = first_key
+        self.first_key_notes=first_key_notes
         self.first_chord_progression = first_chord_progression
         self.second_key = second_key
+        self.second_key_notes = second_key_notes
         self.second_chord_progression = second_chord_progression
         self.learned_prcntg = learned_prcntg
         self.is_favorite = is_favorite
@@ -89,8 +93,10 @@ class SongModel(db.Model):
                 "artistId": self.artist_id,
                 "userId": self.user_id,
                 "firstKey": self.first_key,
+                "firstKeyNotes": self.first_key_notes,
                 "firstChordProgression": self.first_chord_progression,
                 "secondKey": self.second_key,
+                "secondKeyNotes": self.second_key_notes,
                 "secondChordProgression": self.second_chord_progression,
                 "practicedPrcntg": self.learned_prcntg,
                 "isFavorite": self.is_favorite,
@@ -129,8 +135,21 @@ class SongModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find_all_user_songs(cls, user_id):
-        return cls.query.filter_by(user_id=user_id)
+    def find_all_user_songs(cls, user_id,load_number):
+        #starting_index=load_number*20
+        skip=0
+        if load_number!=1:
+            skip=(load_number-1)*2
+        return cls.query.filter_by(user_id=user_id).limit(2).offset(skip)
+        #.limit(page_size).offset(skip)
+
+    # @classmethod
+    # def find_all_user_songs_by_desc_order(cls, user_id):
+    #     return cls.query.filter_by(user_id=user_id).desc()
+
+    # @classmethod
+    # def find_all_user_songs_by_asc_order(cls, user_id):
+    #     return cls.query.filter_by(user_id=user_id).asc()
 
     @classmethod
     def find_all_user_my_songs(cls, user_id):
