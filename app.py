@@ -79,28 +79,29 @@ jwt = JWTManager(app)             # vraca access token
 
 ##ROUTES
 api.add_resource(UserRegister, "/register")
-api.add_resource(UserList, "/users")
-api.add_resource(User, "/user/<int:user_id>")
+api.add_resource(UserList, "/users")#samo za postman koristim
+api.add_resource(User, "/user/<int:user_id>")#samo za postman koristim
 
 api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogout, '/logout')
 
-api.add_resource(TokenRefresh, '/refresh')
+#api.add_resource(TokenRefresh, '/refresh') #nekoristim
 
-# vraca sve userove artiste s pjesmama
+# vraca sve userove artiste s artistovim info
 api.add_resource(ArtistList, "/artists/<string:username>")
 # ispisuje sve pjesme odredenog artista   (za odredenog usera)
 api.add_resource(ArtistUserList, "/artist/<string:username>")
-# ispisuje sve pjesme artista odredenog usera
-api.add_resource(Artist, "/artist/<string:name>")
 
-api.add_resource(SongList, "/songs")
+# ispisuje sve pjesme artista odredenog usera
+#api.add_resource(Artist, "/artist/<string:name>") #trenutno ne koristimo
+
 api.add_resource(MusicKeys, "/keys")
+api.add_resource(SongList, "/songs")
 api.add_resource(UsersSongList, "/songs/<string:username>")
 api.add_resource(Song, "/song/<string:username>")
 # api.add_resource(Song, "/song/<int:user_id>")
 
-# ovo sluzi za ubacivanje webvssite linkova
+# ovo sluzi za ubacivanje i brisanje webvssite linkova
 api.add_resource(Website, "/website/<string:username>")
 # dohvacanje svih websiteova od usera
 api.add_resource(WebsiteList, "/websites/<string:username>")

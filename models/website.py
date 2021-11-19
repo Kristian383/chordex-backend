@@ -4,8 +4,8 @@ class WebsiteModel(db.Model):
     __tablename__ = "website"
     id = db.Column(db.Integer, primary_key=True)
     # useful_websites_id = db.Column(db.Integer, db.ForeignKey("useful_websites.id"))
-    name = db.Column(db.String(80))
-    link = db.Column(db.String(180))
+    name = db.Column(db.String(40))
+    link = db.Column(db.String(150))
     user_id=db.Column(db.Integer, db.ForeignKey("user.id"))
 
     def __init__(self, name, link,user_id):
@@ -16,7 +16,7 @@ class WebsiteModel(db.Model):
     def json(self):
             return {"name": self.name,
                     "link": self.link,
-                    "user_id": self.user_id,
+                   # "userId": self.user_id,
                     }
 
     def save_to_db(self):

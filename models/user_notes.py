@@ -15,9 +15,9 @@ class UserNotesModel(db.Model):
 
     def json(self):
             return {"notes": self.notes,
-                    "txt_area_height": self.txt_area_height,
-                    "user_id": self.username_id,
-                    "note_id":self.id
+                    "txtAreaHeight": self.txt_area_height,
+                    #"userId": self.username_id,
+                    #"id":self.id
                     #"useful_links": [link.json() for link in self.useful_links.all()]
                     }
 

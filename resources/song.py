@@ -186,10 +186,10 @@ class Song(Resource):
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
 
-        if SongModel.find_by_name(data["songName"], user.id):
-            return {'message': "An song with name '{}' already exists.".format(data["songName"])}, 400
-
         artist = ArtistModel.find_by_name(data["artist"], user.id)
+
+        if artist and SongModel.checkIfArtistHasSong(artist.id, user.id,data["songName"]):
+            return {'message': "Artist '{0}' already has a song with name '{1}'.".format(data["artist"],data["songName"])}, 400
 
         if artist is None:
             artist = ArtistModel(data["artist"], user.id)
@@ -311,12 +311,12 @@ class SongList(Resource):
 
 
 class UsersSongList(Resource):
-    parser = reqparse.RequestParser()
-    parser.add_argument('username',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
+    # parser = reqparse.RequestParser()
+    # parser.add_argument('username',
+    #                     type=str,
+    #                     required=True,
+    #                     help="This field cannot be left blank!"
+    #                     )
     
 
     # @jwt_required()
