@@ -218,8 +218,8 @@ class Song(Resource):
                          data["acoustic"],
                          data["electric"],
                          data["difficulty"],
-                         data["tuning"]
-                         #  data["lastViewed"],
+                         data["tuning"],
+                         data["lastViewed"]
                          )
         # firstKeyNotes
         # secondKeyNotes
@@ -274,6 +274,7 @@ class Song(Resource):
             song.electric = data["electric"]
             song.difficulty = data["difficulty"]
             song.tuning = data["tuning"]
+            song.last_viewed = data["lastViewed"]
 
         try:
             song.save_to_db()

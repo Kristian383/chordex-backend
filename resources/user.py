@@ -149,18 +149,25 @@ class UserLogout(Resource):
 
 
 class TokenRefresh(Resource):
+    
     # @jwt_refresh_token_required
-    @jwt_required(refresh=True)
-    def post(self):
+    #@jwt_required(refresh=True)
+    @jwt_required()
+    def get(self):
         user_id = get_jwt_identity()
-        user = User.query.filter_by(user_id=user_id).first()
+        user = UserModel.query.filter_by(id=user_id).first()
+
+        if not user:
+            return {"message": "User not found"}, 404
         access_token = create_access_token(identity=user.id)
 
         # new_token = create_access_token(identity=user_id, fresh=False)
-        response = jsonify()
-        set_access_cookies(response, access_token)
+        #response = jsonify()
+        #set_access_cookies(response, access_token)
 
-        return response, 201
+        return {
+            "token":access_token
+        }
 
 
 class UserList(Resource):

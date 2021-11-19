@@ -39,7 +39,7 @@ class SongModel(db.Model):
     tuning = db.Column(db.String(50))
 
     # sql alchemy kreira date automatski, ali ovo treba u put azurirati
-    # last_viewed = db.Column(db.DateTime(timezone=True), default=func.now())
+    last_viewed = db.Column(db.String(80))
 
     def __init__(self, name,
                  artist_id,
@@ -62,7 +62,7 @@ class SongModel(db.Model):
                  electric=None,
                  difficulty=None,
                  tuning=None,
-                 #  last_viewed=None,
+                 last_viewed=None,
                  ):
         self.name = name
         self.artist_id = artist_id
@@ -85,7 +85,7 @@ class SongModel(db.Model):
         self.difficulty = difficulty
         self.capo = capo
         self.tuning = tuning
-        # self.last_viewed = last_viewed
+        self.last_viewed = last_viewed
 
     def json(self):
         return {"songName": self.name,
@@ -110,7 +110,7 @@ class SongModel(db.Model):
                 "difficulty": self.difficulty,
                 "capo": self.capo,
                 "tuning": self.tuning,
-                # "last_viewed": self.last_viewed
+                "lastViewed": self.last_viewed
                 }
 
 
