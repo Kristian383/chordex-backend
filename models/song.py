@@ -145,7 +145,7 @@ class SongModel(db.Model):
         skip=0
         if load_number!=1:
             skip=(load_number-1)*2
-        return cls.query.filter_by(user_id=user_id).limit(2).offset(skip)
+        return cls.query.filter_by(user_id=user_id).order_by(cls.last_viewed.desc()).limit(2).offset(skip)
         #.limit(page_size).offset(skip)
 
     # @classmethod
