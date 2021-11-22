@@ -1,25 +1,25 @@
 
 # import sqlite3
-from flask_jwt_extended.utils import get_jti
+#from flask_jwt_extended.utils import get_jti
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash #, generate_password_hash
 from flask_jwt_extended import (
     create_access_token,
     jwt_required,
-    create_refresh_token,
-    get_jwt,
+    #create_refresh_token,
+    #get_jwt,
     get_jwt_identity,
-    set_access_cookies,
-    set_refresh_cookies,
-    unset_jwt_cookies,
-    get_unverified_jwt_headers
+    #set_access_cookies,
+    #set_refresh_cookies,
+    #unset_jwt_cookies,
+    #get_unverified_jwt_headers
 
 
 )
 
-from blocklist import BLOCKLIST
+# from blocklist import BLOCKLIST
 
 from flask import jsonify, make_response
 # jwt_refresh_token_required,
@@ -71,7 +71,7 @@ class UserRegister(Resource):
         # return response, 201
 
 
-class User(Resource):
+class User(Resource): #nece trebati?
     @classmethod
     def get(cls, user_id):
         user = UserModel.find_by_id(user_id)
@@ -113,10 +113,9 @@ class UserLogin(Resource):
         # user = UserModel.find_by_username(data['username'])
         user = UserModel.find_by_email(data['email'])
 
-        # if user and safe_str_cmp(user.password, data['password']):
         if user and check_password_hash(user.password, data['password']):
             access_token = create_access_token(
-                identity=user.id)  # , fresh=True  # identity staviti mail?
+                identity=user.id)   # identity staviti mail?
             # refresh_token = create_refresh_token(identity=user.id)
             # return {
             #     'access_token': access_token,
@@ -135,17 +134,16 @@ class UserLogin(Resource):
         return {"message": "Invalid Credentials!"}, 401
 
 
-class UserLogout(Resource):
-    @jwt_required()
-    def post(self):
-        # jti is "JWT ID", a unique identifier for a JWT.
-        response = jsonify()
-        unset_jwt_cookies(response)
-        # jti = get_jwt()['jti']
-        # BLOCKLIST.add(jti)
+# class UserLogout(Resource):
+#     @jwt_required()
+#     def post(self):
+#         # jti is "JWT ID", a unique identifier for a JWT.
+#         response = jsonify()
+#         jti = get_jwt()['jti']
+#         BLOCKLIST.add(jti)
 
-        # return {"message": "Successfully logged out"}, 200
-        return response, 200
+#         return {"message": "Successfully logged out"}, 200
+#         return response, 200
 
 
 class TokenRefresh(Resource):

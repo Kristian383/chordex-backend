@@ -8,7 +8,7 @@ class UserNotesModel(db.Model):
     username_id=db.Column(db.Integer, db.ForeignKey("user.id"))
     #useful_links= db.relationship("WebsiteModel",lazy="dynamic")      #ovo cak odvojiti mogu
 
-    def __init__(self, username_id,notes="", txt_area_height=200):
+    def __init__(self, username_id,notes="", txt_area_height=400):
         self.notes = notes
         self.txt_area_height = txt_area_height
         self.username_id = username_id

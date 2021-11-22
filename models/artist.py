@@ -1,28 +1,5 @@
 
 from db import db
-# from models.song import SongModel
-# class ArtistUserModel(db.Model):
-#     __tablename__ = "artist_user"
-#     id = db.Column(db.Integer, primary_key=True)
-#     artist_id=db.Column(db.Integer, db.ForeignKey('artist.id'))
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-#     songs = db.relationship("SongModel",lazy="dynamic")
-#     total_songs = db.Column(db.Integer)
-#     order = db.Column(db.Integer)
-
-#     def __init__(self, artist_id,user_id):
-#         self.artist_id = artist_id
-#         self.user_id = user_id
-
-#     @classmethod
-#     def find_all(cls):
-#         return cls.query.all()
-
-#     def save_to_db(self):
-#         db.session.add(self)
-#         db.session.commit()
-
 
 class ArtistModel(db.Model):
     __tablename__ = "artist"
@@ -75,11 +52,12 @@ class ArtistModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find_all_user_artists(cls, user_id, load_number):
-        skip = 0
-        if load_number != 1:
-            skip = (load_number-1)*2
-        return cls.query.filter_by(user_id=user_id).limit(2).offset(skip)
+    def find_all_user_artists(cls, user_id):
+        # skip = 0
+        # if load_number != 1:
+        #     skip = (load_number-1)*2
+        # return cls.query.filter_by(user_id=user_id).limit(2).offset(skip)
+        return cls.query.filter_by(user_id=user_id)
 
     def save_to_db(self):
         db.session.add(self)

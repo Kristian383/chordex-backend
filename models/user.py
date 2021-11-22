@@ -10,7 +10,7 @@ class UserModel(db.Model):
     email = db.Column(db.String(50),unique=True)
     password = db.Column(db.String(50))
 
-    songs=db.relationship("SongModel",lazy="dynamic")
+    songs=db.relationship("SongModel",lazy="dynamic") 
     websites=db.relationship("WebsiteModel",lazy="dynamic")
 
     number_of_songs=db.Column(db.Integer)
@@ -22,10 +22,10 @@ class UserModel(db.Model):
                 "id": self.id,
                 "email": self.email,
                 "songs":[song.json() for song in self.songs.all()],
-                "websites":[website.json() for website in self.websites.all()],
-                "number_of_songs": self.number_of_songs,
-                "number_of_my_songs": self.number_of_my_songs,
-                "number_of_artists": self.number_of_artists,
+               "websites":[website.json() for website in self.websites.all()],
+                "numOfSongs": self.number_of_songs,
+                "numOfMySongs": self.number_of_my_songs,
+                "numOfArtists": self.number_of_artists,
                 }
 
     def __init__(self, username, password,email):

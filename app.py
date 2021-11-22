@@ -1,28 +1,30 @@
 from collections import UserList
-from flask import Flask, jsonify
+from flask import Flask#, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
-from datetime import datetime
 from datetime import timedelta
-from datetime import timezone
 
 # from flask_jwt import JWT
 # from security import authenticate, identity
 
-from resources.user import UserRegister, User, UserList, UserLogin , UserLogout, TokenRefresh
+from resources.user import UserRegister, User, UserList, UserLogin # UserLogout, TokenRefresh
 from resources.artist import Artist, ArtistList, ArtistUserList
 from resources.song import Song, SongList, UsersSongList, MusicKeys
 from resources.website import Website, WebsiteList
-from resources.user_notes import UserNotes, UserNotesList
+from resources.user_notes import UserNotes# UserNotesList
 
 from db import db
-from blocklist import BLOCKLIST
+# from blocklist import BLOCKLIST
+
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# app.config["JWT_BLACKLIST_ENABLED"] = True
+# app.config["JWT_BLACKLIST_TOKEN_CHECLS"] = ["access"]
 
 # If true this will only allow the cookies that contain your JWTs to be sent
 # over https. In production, this should always be set to True
@@ -83,7 +85,7 @@ api.add_resource(UserList, "/users")#samo za postman koristim
 api.add_resource(User, "/user/<int:user_id>")#samo za postman koristim
 
 api.add_resource(UserLogin, '/login')
-api.add_resource(UserLogout, '/logout')
+#api.add_resource(UserLogout, '/logout')
 
 #api.add_resource(TokenRefresh, '/refresh') #nekoristim
 

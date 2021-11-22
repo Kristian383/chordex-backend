@@ -1,10 +1,7 @@
 
-from sqlalchemy.sql.functions import user
 from db import db
-from sqlalchemy.sql import func
 
-from models.artist import ArtistModel
-from sqlalchemy import func
+#from models.artist import ArtistModel
 
 
     
@@ -140,13 +137,12 @@ class SongModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find_all_user_songs(cls, user_id,load_number):
-        #starting_index=load_number*20
-        skip=0
-        if load_number!=1:
-            skip=(load_number-1)*2
-        return cls.query.filter_by(user_id=user_id).order_by(cls.last_viewed.desc()).limit(2).offset(skip)
-        #.limit(page_size).offset(skip)
+    def find_all_user_songs(cls, user_id):#,load_number
+        return cls.query.filter_by(user_id=user_id).order_by(cls.last_viewed.desc()) #.all()
+        # skip=0
+        # if load_number!=1:
+        #     skip=(load_number-1)*2
+        # return cls.query.filter_by(user_id=user_id).order_by(cls.last_viewed.desc()).limit(2).offset(skip)
 
     # @classmethod
     # def find_all_user_songs_by_desc_order(cls, user_id):

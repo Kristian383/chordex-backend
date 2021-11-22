@@ -74,19 +74,19 @@ class Artist(Resource):
 
 class ArtistList(Resource):  # get all users artists with their info
     def get(self, username):
-        numOfLoads = int(request.args["numOfLoads"])
+        # numOfLoads = int(request.args["numOfLoads"])
         user = UserModel.find_by_username(username)
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
 
-        artists=[artist.getArtistInfo() for artist in ArtistModel.find_all_user_artists(user.id, numOfLoads)]
+        artists = [artist.getArtistInfo()
+                   for artist in ArtistModel.find_all_user_artists(user.id)]
         for artist in artists:
-            artist_id=artist["artistId"]
-            artist["totalSongs"]=SongModel.count_all_user_songs_by_artist(user.id,artist_id)
+            artist_id = artist["artistId"]
+            artist["totalSongs"] = SongModel.count_all_user_songs_by_artist(
+                user.id, artist_id)
 
-        return {
-            "artists": artists,
-            }
+        return {"artists": artists}
 
 
 class ArtistUserList(Resource):  # ovo vraca pjesme jednog artista

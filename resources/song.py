@@ -1,5 +1,5 @@
-import flask
-from flask.json import jsonify
+#import flask
+#from flask.json import jsonify
 from flask_restful import Resource, reqparse
 from models.song import SongModel
 from models.artist import ArtistModel
@@ -7,7 +7,7 @@ from models.user import UserModel
 from flask_jwt_extended import jwt_required
 from flask import request
 
-import json
+#import json
 
 
 class MusicKeys(Resource):
@@ -163,7 +163,7 @@ class Song(Resource):
                         required=False,
                         help="This field cannot be left blank!"
                         )
-
+    
     def get(self, name, username):
         user = UserModel.find_by_username(username)
 
@@ -311,24 +311,15 @@ class SongList(Resource):
 
 
 class UsersSongList(Resource):
-    # parser = reqparse.RequestParser()
-    # parser.add_argument('username',
-    #                     type=str,
-    #                     required=True,
-    #                     help="This field cannot be left blank!"
-    #                     )
-    
-
     # @jwt_required()
     def get(self, username):
-        #data = UsersSongList.parser.parse_args()
-        numOfLoads = int(request.args["numOfLoads"])
+        #numOfLoads = int(request.args["numOfLoads"])
         user = UserModel.find_by_username(username)
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
         #return {"numOfLoads":queryStringRaw}
         songs = [song.json()
-                 for song in SongModel.find_all_user_songs(user.id,numOfLoads)]
+                 for song in SongModel.find_all_user_songs(user.id)]#,numOfLoads
 
         # artists=[]
         for song in songs:
