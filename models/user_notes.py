@@ -6,7 +6,6 @@ class UserNotesModel(db.Model):
     notes = db.Column(db.String(8000))
     txt_area_height = db.Column(db.Integer)
     username_id=db.Column(db.Integer, db.ForeignKey("user.id"))
-    #useful_links= db.relationship("WebsiteModel",lazy="dynamic")      #ovo cak odvojiti mogu
 
     def __init__(self, username_id,notes="", txt_area_height=400):
         self.notes = notes
@@ -15,10 +14,7 @@ class UserNotesModel(db.Model):
 
     def json(self):
             return {"notes": self.notes,
-                    "txtAreaHeight": self.txt_area_height,
-                    #"userId": self.username_id,
-                    #"id":self.id
-                    #"useful_links": [link.json() for link in self.useful_links.all()]
+                    "txtAreaHeight": self.txt_area_height
                     }
 
     def save_to_db(self):
@@ -29,7 +25,6 @@ class UserNotesModel(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    
 
     @classmethod
     def find_by_username(cls, username):
@@ -38,10 +33,6 @@ class UserNotesModel(db.Model):
     @classmethod
     def find_by_userId(cls, user_id):
         return cls.query.filter_by(username_id=user_id).first()
-
-    # @classmethod
-    # def find_by_noteId(cls, id):
-    #     return cls.query.filter_by(id=id).first()
 
     @classmethod
     def find_all(cls):

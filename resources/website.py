@@ -16,21 +16,6 @@ class Website(Resource):
                         required=False,
                         help="This field cannot be left blank!"
                         )
-    
-    # nece ni trebati
-    # def get(self, username):
-    #     data = Website.parser.parse_args()
-    #     user = UserModel.find_by_username(username)
-    #     if not user:
-    #         return {"message": "User with that username doesn't exist"}, 400
-
-    #     user_id = UserModel.find_by_username(username).json()["id"]
-
-    #     website = WebsiteModel.find_by_name(data["website_name"], user_id)
-
-    #     if website:
-    #         return website.json()
-    #     return {"message": "User websites empty."}, 200
 
     def post(self, username):
         data = Website.parser.parse_args()
@@ -39,12 +24,10 @@ class Website(Resource):
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
 
-
         if WebsiteModel.find_by_name(data["name"], user.id):
             return {'message': "An website with name '{}' already exists.".format(data["name"])}, 400
 
         website = WebsiteModel(data["name"], data["link"], user.id)
-        # self.insert(artist["name"])
         try:
             website.save_to_db()
         except:

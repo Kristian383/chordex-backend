@@ -198,7 +198,8 @@ class Song(Resource):
             except:
                 return {"message": "An error occured inserting an artist."}, 500
 
-        # return {"msg":data}
+        # msg=SongModel.checkIfArtistHasSong(artist.id, user.id,data["songName"])
+        # return {"msg":msg}
 
         song = SongModel(data["songName"], artist.id, user.id,
                          data["firstKey"],
@@ -304,7 +305,7 @@ class Song(Resource):
         else:
             return {'message': 'Song doesnt exist'}, 400
 
-
+#admin route
 class SongList(Resource):
     def get(self):
         return {"songs": [song.json() for song in SongModel.find_all()]}

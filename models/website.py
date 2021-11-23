@@ -3,7 +3,6 @@ from db import db
 class WebsiteModel(db.Model):
     __tablename__ = "website"
     id = db.Column(db.Integer, primary_key=True)
-    # useful_websites_id = db.Column(db.Integer, db.ForeignKey("useful_websites.id"))
     name = db.Column(db.String(40))
     link = db.Column(db.String(150))
     user_id=db.Column(db.Integer, db.ForeignKey("user.id"))
@@ -15,8 +14,7 @@ class WebsiteModel(db.Model):
 
     def json(self):
             return {"name": self.name,
-                    "link": self.link,
-                   # "userId": self.user_id,
+                    "link": self.link
                     }
 
     def save_to_db(self):
