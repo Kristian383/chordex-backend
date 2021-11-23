@@ -35,8 +35,6 @@ class SongModel(db.Model):
     electric = db.Column(db.Boolean)
     difficulty = db.Column(db.String(10))
     tuning = db.Column(db.String(20))
-
-    # sql alchemy kreira date automatski, ali ovo treba u put azurirati
     last_viewed = db.Column(db.String(40))
 
     def __init__(self, name,
@@ -126,7 +124,7 @@ class SongModel(db.Model):
 
     @classmethod
     def checkIfArtistHasSong(cls, artist_id, user_id,name):
-        return cls.query.filter_by(user_id=user_id).filter_by(id=artist_id).filter_by(name=name).first()
+        return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter_by(name=name).first()
     
     @classmethod
     def find_by_id(cls, song_id,user_id):
