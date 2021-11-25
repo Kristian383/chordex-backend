@@ -12,17 +12,29 @@ from resources.artist import  ArtistList, ArtistUserList
 from resources.song import Song, SongList, UsersSongList, MusicKeys
 from resources.website import Website, WebsiteList
 from resources.user_notes import UserNotes
+from resources.mails import ForgotPassword,ContactMe
 
 from db import db
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 app = Flask(__name__)
+
+# app.config["EMAIL_PASSWORD"]=os.environ.get("EMAIL_PASS")
+# app.config["EMAIL_ADRESS"]=os.environ.get("EMAIL_USER")
+
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-app.config["JWT_SECRET_KEY"] = "kiki"
+app.config["JWT_SECRET_KEY"] =  os.environ.get("SECRET_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=12)
 
 api = Api(app)
+#mail = Mail(app)
+
 CORS(app)
 
 @app.before_first_request
@@ -34,6 +46,8 @@ jwt = JWTManager(app)
 ##ROUTES
 api.add_resource(UserRegister, "/register")
 api.add_resource(UserLogin, '/login')
+api.add_resource(ForgotPassword, '/resetpassword')
+api.add_resource(ContactMe, '/contactme')
 
 # get all user artists with artist info
 api.add_resource(ArtistList, "/artists/<string:username>")
