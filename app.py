@@ -1,5 +1,5 @@
 from collections import UserList
-from flask import Flask#, jsonify
+from flask import Flask  # , jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
@@ -7,12 +7,12 @@ from flask_cors import CORS
 from datetime import timedelta
 
 
-from resources.user import UserRegister, User, UserList, UserLogin 
-from resources.artist import  ArtistList, ArtistUserList
+from resources.user import UserRegister, User, UserList, UserLogin
+from resources.artist import ArtistList, ArtistUserList
 from resources.song import Song, SongList, UsersSongList, MusicKeys
 from resources.website import Website, WebsiteList
 from resources.user_notes import UserNotes
-from resources.mails import ForgotPassword,ContactMe
+from resources.mails import ForgotPassword, ContactMe, PasswordReset
 
 from db import db
 import os
@@ -29,7 +29,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-app.config["JWT_SECRET_KEY"] =  os.environ.get("SECRET_KEY")
+app.config["JWT_SECRET_KEY"] = os.environ.get("SECRET_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=12)
 
 api = Api(app)
@@ -37,16 +37,19 @@ api = Api(app)
 
 CORS(app)
 
+
 @app.before_first_request
 def create_tables():
     db.create_all()
 
-jwt = JWTManager(app)            
 
-##ROUTES
+jwt = JWTManager(app)
+
+# ROUTES
 api.add_resource(UserRegister, "/register")
 api.add_resource(UserLogin, '/login')
-api.add_resource(ForgotPassword, '/resetpassword')
+api.add_resource(ForgotPassword, '/forgotpassword')
+api.add_resource(PasswordReset, '/resetpassword/<string:token>')
 api.add_resource(ContactMe, '/contactme')
 
 # get all user artists with artist info
@@ -67,11 +70,11 @@ api.add_resource(WebsiteList, "/websites/<string:username>")
 
 api.add_resource(UserNotes, "/notes/<string:username>")
 
-#admin routes
+# admin routes
 # api.add_resource(User, "/user/<string:username>")
 # api.add_resource(UserNotesList, "/notes")   #provjera za developera
-#api.add_resource(UserList, "/users") #all users
-#api.add_resource(User, "/user/<int:user_id>")#samo za postman koristim
+# api.add_resource(UserList, "/users") #all users
+# api.add_resource(User, "/user/<int:user_id>")#samo za postman koristim
 #api.add_resource(SongList, "/songs")
 
 if __name__ == "__main__":
@@ -92,7 +95,7 @@ if __name__ == "__main__":
 #     }), 401
 
 # @jwt.invalid_token_loader
-# def invalid_token_callback(error):  
+# def invalid_token_callback(error):
 #     return jsonify({
 #         'message': 'Signature verification failed.',
 #         'error': 'invalid_token'

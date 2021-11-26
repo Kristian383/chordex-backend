@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-
 class UserModel(db.Model):
     __tablename__ = "user"
 
@@ -66,16 +65,20 @@ class UserModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def get_reset_pass_token(cls, user_id,expires_sec=1800):
-        secret = os.environ.get("SECRET_KEY") #ili userov password
-        s = Serializer(secret, expires_sec)
+    def get_reset_pass_token(cls, user_id, expires_sec=1800):
+        secret = os.environ.get("SECRET_KEY")
+        pass_hash = cls.find_by_id(user_id).password
+        s = Serializer(secret+pass_hash, expires_sec)
         token = s.dumps({"user_id": user_id}).decode("utf-8")
         return token
 
     @classmethod
-    def verify_reset_pass_token(cls, token):
-
-        s = Serializer(os.environ.get("SECRET_KEY"))
+    def verify_reset_pass_token(cls, token, email):
+        user = cls.find_by_email(email)
+        if not user:
+            return None
+        secret = os.environ.get("SECRET_KEY")+user.password
+        s = Serializer(secret)
         try:
             user_id = s.loads(token)["user_id"]
         except:
