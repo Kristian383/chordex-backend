@@ -9,7 +9,7 @@ from datetime import timedelta
 
 from resources.user import UserRegister, User, UserList, UserLogin
 from resources.artist import ArtistList, ArtistUserList
-from resources.song import Song, SongList, UsersSongList, MusicKeys
+from resources.song import Song, SongList, UsersSongList, MusicKeys,SpotifyInfo
 from resources.website import Website, WebsiteList
 from resources.user_notes import UserNotes
 from resources.mails import ForgotPassword, ContactMe, PasswordReset
@@ -52,6 +52,7 @@ api.add_resource(ForgotPassword, '/forgotpassword')
 api.add_resource(PasswordReset, '/resetpassword/<string:token>')
 api.add_resource(ContactMe, '/contactme')
 
+api.add_resource(SpotifyInfo, '/spotifyacess')
 # get all user artists with artist info
 api.add_resource(ArtistList, "/artists/<string:username>")
 

@@ -1,16 +1,23 @@
 #import flask
-#from flask.json import jsonify
+# from flask.json import jsonify
 from flask_restful import Resource, reqparse
 from models.song import SongModel
 from models.artist import ArtistModel
 from models.user import UserModel
 from flask_jwt_extended import jwt_required
 from flask import request
+import requests
+import json
+import os
+from dotenv import load_dotenv
 
-#import json
+load_dotenv()
 
 
 class MusicKeys(Resource):
+    pitchClass = ["C", "C#", "D", "D#", "E", "E#",
+                  "F", "F#", "G", "G#", "A", "A#", "B"]
+    mode = ["minor", "major"]
     musicKeys = [
         {"key": "C", "relativeMinor": "A", "notes": [
             "C", "D", "E", "F", "G", "A", "B"]},
@@ -163,7 +170,7 @@ class Song(Resource):
                         required=False,
                         help="This field cannot be left blank!"
                         )
-    
+
     def get(self, name, username):
         user = UserModel.find_by_username(username)
 
@@ -188,8 +195,8 @@ class Song(Resource):
 
         artist = ArtistModel.find_by_name(data["artist"], user.id)
 
-        if artist and SongModel.checkIfArtistHasSong(artist.id, user.id,data["songName"]):
-            return {'message': "Artist '{0}' already has a song with name '{1}'.".format(data["artist"],data["songName"])}, 400
+        if artist and SongModel.checkIfArtistHasSong(artist.id, user.id, data["songName"]):
+            return {'message': "Artist '{0}' already has a song with name '{1}'.".format(data["artist"], data["songName"])}, 400
 
         if artist is None:
             artist = ArtistModel(data["artist"], user.id)
@@ -305,7 +312,9 @@ class Song(Resource):
         else:
             return {'message': 'Song doesnt exist'}, 400
 
-#admin route
+# admin route
+
+
 class SongList(Resource):
     def get(self):
         return {"songs": [song.json() for song in SongModel.find_all()]}
@@ -318,9 +327,9 @@ class UsersSongList(Resource):
         user = UserModel.find_by_username(username)
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
-        #return {"numOfLoads":queryStringRaw}
+        # return {"numOfLoads":queryStringRaw}
         songs = [song.json()
-                 for song in SongModel.find_all_user_songs(user.id)]#,numOfLoads
+                 for song in SongModel.find_all_user_songs(user.id)]  # ,numOfLoads
 
         # artists=[]
         for song in songs:
@@ -328,6 +337,75 @@ class UsersSongList(Resource):
             song["artist"] = artist.name
             # artists.append(artist.json())
         return {"songs": songs}
+
+
+class SpotifyInfo(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('songName',
+                        type=str,
+                        required=True,
+                        help="This field cannot be left blank!"
+                        )
+    parser.add_argument('artist',
+                        type=str,
+                        required=True,
+                        help="This field cannot be left blank!"
+                        )
+
+    def post(self):
+        # os.environ.get("EMAIL_USER")
+        data = SpotifyInfo.parser.parse_args()
+        # https://api.spotify.com/v1/search?q=track:I%20need%20a hero%20artist:the%20artist&type=track
+        # get spotify acces token
+        response = requests.post(
+            'https://accounts.spotify.com/api/token',
+            data={'grant_type': 'client_credentials'},
+            headers={
+                'Authorization': 'Basic '+os.environ.get("API_TOGETHER")}
+        )
+        token = response.json()["access_token"]
+        url = "https://api.spotify.com/v1/search?q=track:" + \
+            data["songName"]+"+artist:"+data["artist"]+"&type=track%2Cartist"
+        # url = "https://api.spotify.com/v1/search?q=track:" + \
+        #     "Californication"+"+artist:"+"Red hot chilli peppers&type=track%2Cartist"
+        response_track = requests.get(
+            url, headers={'Authorization': 'Bearer '+token})
+        track = ""
+        try:
+            track = response_track.json()["tracks"]["items"][0]["album"]
+        except:
+            track = "Sorry, couldnt get info of the song"
+            return {"message": "failed"}, 404
+        # return track
+        artist_name = track["artists"][0]["name"]
+        # song_name=track["name"]
+        image_url = track["images"][1]["url"]
+        track_id = response_track.json()["tracks"]["items"][0]["id"]
+
+        info_url = "https://api.spotify.com/v1/audio-analysis/{}".format(
+            track_id)
+
+        response_detailed = requests.get(
+            info_url, headers={'Authorization': 'Bearer '+token})
+
+        detailed_data = response_detailed.json()
+        tempo = round(detailed_data["track"]["tempo"])
+        key = MusicKeys.pitchClass[detailed_data["track"]["key"]]
+        mode = MusicKeys.mode[detailed_data["track"]["mode"]]
+        key = key+" "+mode
+
+        # print("response_detailed", response_detailed.json())
+        print("tempo", tempo)
+        print("key", key)
+        print("image_url", image_url)
+        # return detailed_data
+        return {
+            "key": key,
+            "bpm": tempo,
+            "image_url": image_url,
+            "artist": artist_name
+        }
+
 
 #  song = SongModel(data["name"], artist.id, user_id,
         # data["first_key"],
