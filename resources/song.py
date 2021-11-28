@@ -246,7 +246,7 @@ class Song(Resource):
             return {"message": "An error occured inserting a song."}, 500
         resp = artist.json()
         return {
-            "songs": song.json(),
+            "song": song.json(),
             "artist": resp
         }, 201
 
