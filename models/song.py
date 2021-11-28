@@ -34,6 +34,8 @@ class SongModel(db.Model):
     difficulty = db.Column(db.String(10))
     tuning = db.Column(db.String(20))
     last_viewed = db.Column(db.String(40))
+    img_url = db.Column(db.String(100))
+    
 
     def __init__(self, name,
                  artist_id,
@@ -57,6 +59,7 @@ class SongModel(db.Model):
                  difficulty=None,
                  tuning=None,
                  last_viewed=None,
+                 img_url=None
                  ):
         self.name = name
         self.artist_id = artist_id
@@ -80,6 +83,7 @@ class SongModel(db.Model):
         self.capo = capo
         self.tuning = tuning
         self.last_viewed = last_viewed
+        self.img_url = img_url
 
     def json(self):
         return {"songName": self.name,
@@ -104,7 +108,8 @@ class SongModel(db.Model):
                 "difficulty": self.difficulty,
                 "capo": self.capo,
                 "tuning": self.tuning,
-                "lastViewed": self.last_viewed
+                "lastViewed": self.last_viewed,
+                "imgUrl": self.img_url
                 }
 
     @classmethod

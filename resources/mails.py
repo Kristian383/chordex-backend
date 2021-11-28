@@ -109,39 +109,6 @@ class ForgotPassword(Resource):
 
         return {"message": "We received your request. Please check your email."}
 
-# Someone requested that the password be reset for the following account:
-
-# https://frontendmasters.com/
-
-# Username: kristian3833@gmail.com
-
-# If this was a mistake, just ignore this email and nothing will happen.
-
-# To reset your password, visit the following address:
-
-
-
-
-
-
-
-
-# with smtplib.SMTP("smtp.gmail.com",587) as smtp:
-#     smtp.ehlo()
-#     smtp.starttls()
-#     smtp.ehlo()
-#     smtp.login(EMAIL_ADRESS,EMAIL_PASSWORD)
-# with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-
-#     smtp.login(EMAIL_ADRESS,EMAIL_PASSWORD)
-
-#     subject="Play guitar and enjoy it"
-#     body="Do you want to learn how to play?"
-
-#     msg=f'Subject: {subject}\n\n{body}'
-
-#     smtp.sendmail(EMAIL_ADRESS,"kristian383@gmail.com",msg)
-
 
 # ako zelim svima poslat mail
 # contacts=["test@test.com","test2@gmail.com"]

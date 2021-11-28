@@ -20,9 +20,9 @@ class UserModel(db.Model):
     songs = db.relationship("SongModel", lazy="dynamic")
     websites = db.relationship("WebsiteModel", lazy="dynamic")
 
-    number_of_songs = db.Column(db.Integer)
-    number_of_my_songs = db.Column(db.Integer)
-    number_of_artists = db.Column(db.Integer)
+    # number_of_songs = db.Column(db.Integer)
+    # number_of_my_songs = db.Column(db.Integer)
+    # number_of_artists = db.Column(db.Integer)
 
     def json(self):
         return {"username": self.username,

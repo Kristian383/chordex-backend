@@ -19,22 +19,6 @@ class Artist(Resource):
                         help="This field cannot be left blank!"
                         )
 
-    # @jwt_required()
-    # nece nam trebati ovo
-    # def get(self, name):
-    #     data = Artist.parser.parse_args()
-    #     user = UserModel.find_by_username(data["username"])
-
-    #     if not user:
-    #         return {"message": "User with that username doesn't exist"}, 400
-
-    #     artist = ArtistModel.find_by_name(name, user.id)
-
-    #     if artist:
-    #         return artist.json()
-
-    #     return {"message": "No songs by artist {}".format(name)}, 400
-
     def post(self, name):
         data = Artist.parser.parse_args()
         user = UserModel.find_by_username(data["username"])

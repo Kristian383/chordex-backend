@@ -15,7 +15,7 @@ load_dotenv()
 
 
 class MusicKeys(Resource):
-    pitchClass = ["C", "C#", "D", "D#", "E", "E#",
+    pitchClass = ["C", "C#", "D", "D#", "E",
                   "F", "F#", "G", "G#", "A", "A#", "B"]
     mode = ["minor", "major"]
     musicKeys = [
@@ -170,6 +170,11 @@ class Song(Resource):
                         required=False,
                         help="This field cannot be left blank!"
                         )
+    parser.add_argument('imgUrl',
+                        type=str,
+                        required=False,
+                        help="This field cannot be left blank!"
+                        )
 
     def get(self, name, username):
         user = UserModel.find_by_username(username)
@@ -227,7 +232,9 @@ class Song(Resource):
                          data["electric"],
                          data["difficulty"],
                          data["tuning"],
-                         data["lastViewed"]
+                         data["lastViewed"],
+                         data["imgUrl"]
+
                          )
         # firstKeyNotes
         # secondKeyNotes
@@ -248,20 +255,10 @@ class Song(Resource):
 
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
-
-        # return {"msg":data}
         song = SongModel.find_by_id(data["songId"], user.id)
 
         if song is None:
             return {"msg": "song is none"}
-            # artist = ArtistModel.find_by_name(data["artist"], user.id)
-            # if artist is None:
-            #     artist = ArtistModel(data["artist"], user.id)
-            # try:
-            #     artist.save_to_db()
-            # except:
-            #     return {"message": "An error occured inserting an artist."}, 500
-            # song = SongModel(data["songName"], artist.id, user.id)
         else:
             song.name = data["songName"]
             song.first_key = data["firstKey"]
@@ -283,6 +280,7 @@ class Song(Resource):
             song.difficulty = data["difficulty"]
             song.tuning = data["tuning"]
             song.last_viewed = data["lastViewed"]
+            song.img_url = data["imgUrl"]
 
         try:
             song.save_to_db()
@@ -313,7 +311,6 @@ class Song(Resource):
             return {'message': 'Song doesnt exist'}, 400
 
 # admin route
-
 
 class SongList(Resource):
     def get(self):
@@ -353,8 +350,10 @@ class SpotifyInfo(Resource):
                         )
 
     def post(self):
-        # os.environ.get("EMAIL_USER")
+        #provjeriti jeli timer istekao, ako nije onda dohvacamo STARI access, ako JE istekao:
+        # poslati zahtjev za acess, ako dobijemo, staviti timer na 30 min
         data = SpotifyInfo.parser.parse_args()
+
         # https://api.spotify.com/v1/search?q=track:I%20need%20a hero%20artist:the%20artist&type=track
         # get spotify acces token
         response = requests.post(
@@ -363,48 +362,52 @@ class SpotifyInfo(Resource):
             headers={
                 'Authorization': 'Basic '+os.environ.get("API_TOGETHER")}
         )
-        token = response.json()["access_token"]
-        url = "https://api.spotify.com/v1/search?q=track:" + \
-            data["songName"]+"+artist:"+data["artist"]+"&type=track%2Cartist"
-        # url = "https://api.spotify.com/v1/search?q=track:" + \
-        #     "Californication"+"+artist:"+"Red hot chilli peppers&type=track%2Cartist"
-        response_track = requests.get(
-            url, headers={'Authorization': 'Bearer '+token})
-        track = ""
         try:
+            token = response.json()["access_token"]
+            url = "https://api.spotify.com/v1/search?q=track:" + \
+                data["songName"]+"+artist:"+data["artist"]+"&type=track%2Cartist"
+            # url = "https://api.spotify.com/v1/search?q=track:" + \
+            #     "Californication"+"+artist:"+"Red hot chilli peppers&type=track%2Cartist"
+            response_track = requests.get(
+                url, headers={'Authorization': 'Bearer '+token})
+            # track = ""
+            # try:
             track = response_track.json()["tracks"]["items"][0]["album"]
+            # except:
+            #    track = "Sorry, couldnt get info of the song"
+             #   return {"message": "failed"}, 404
+            # return track
+            # artist_name = track["artists"][0]["name"]
+            # song_name=track["name"]
+            image_url = track["images"][1]["url"]
+            track_id = response_track.json()["tracks"]["items"][0]["id"]
+
+            info_url = "https://api.spotify.com/v1/audio-analysis/{}".format(
+                track_id)
+
+            response_detailed = requests.get(
+                info_url, headers={'Authorization': 'Bearer '+token})
+
+            detailed_data = response_detailed.json()
+            tempo = round(detailed_data["track"]["tempo"])
+            key = MusicKeys.pitchClass[detailed_data["track"]["key"]]
+            mode = MusicKeys.mode[detailed_data["track"]["mode"]]
+            key = key+" "+mode
+
+            # print("response_detailed", response_detailed.json())
+            print("tempo", tempo)
+            print("key", detailed_data["track"]["key"])
+            print("image_url", image_url)
+            # return detailed_data
+            return {
+                "key": key,
+                "bpm": tempo,
+                "imgUrl": image_url
+                # "artist": artist_name
+            }
         except:
-            track = "Sorry, couldnt get info of the song"
             return {"message": "failed"}, 404
-        # return track
-        artist_name = track["artists"][0]["name"]
-        # song_name=track["name"]
-        image_url = track["images"][1]["url"]
-        track_id = response_track.json()["tracks"]["items"][0]["id"]
 
-        info_url = "https://api.spotify.com/v1/audio-analysis/{}".format(
-            track_id)
-
-        response_detailed = requests.get(
-            info_url, headers={'Authorization': 'Bearer '+token})
-
-        detailed_data = response_detailed.json()
-        tempo = round(detailed_data["track"]["tempo"])
-        key = MusicKeys.pitchClass[detailed_data["track"]["key"]]
-        mode = MusicKeys.mode[detailed_data["track"]["mode"]]
-        key = key+" "+mode
-
-        # print("response_detailed", response_detailed.json())
-        print("tempo", tempo)
-        print("key", key)
-        print("image_url", image_url)
-        # return detailed_data
-        return {
-            "key": key,
-            "bpm": tempo,
-            "image_url": image_url,
-            "artist": artist_name
-        }
 
 
 #  song = SongModel(data["name"], artist.id, user_id,
