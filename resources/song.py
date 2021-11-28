@@ -315,7 +315,7 @@ class Song(Resource):
         else:
             return {'message': 'Song doesnt exist'}, 400
 
-# admin route
+# admin routes
 
 
 class SongList(Resource):
@@ -342,18 +342,7 @@ class UsersSongList(Resource):
         return {"songs": songs}
 
 
-# def countdown(time_sec):
-#     while time_sec:
-#         mins, secs = divmod(time_sec, 60)
-#         timeformat = '{:02d}:{:02d}'.format(mins, secs)
-#         print(timeformat, end='\r')
-#         time.sleep(1)
-#         time_sec -= 1
-
-#     print("stop")
-#spotify_access = ""
 spotify_access="BQAuiTFBpAgQo6EGRAIVzHHFRNodoL835TrvcIoEXY3Svj3PatJ6gUg3EtViRCF-BGB2JzWGe5ZPjQzk-ZU"
-
 
 class SpotifyInfo(Resource):
     parser = reqparse.RequestParser()
@@ -407,7 +396,6 @@ class SpotifyInfo(Resource):
 
     def post(self):
         data = SpotifyInfo.parser.parse_args()
-        # https://api.spotify.com/v1/search?q=track:I%20need%20a hero%20artist:the%20artist&type=track
         global spotify_access
         spotify_data=self.getTrackInfo(data["songName"],data["artist"],spotify_access)
         print("spotify_access",spotify_access)
@@ -424,81 +412,6 @@ class SpotifyInfo(Resource):
                 return spotify_data
             except:
                 return {"message":"something went wrong"},404
-                
+
         return spotify_data
 
-
-
-
-
-
-
-"""
-        # print("acess",response.json()["access_token"])
-        # try:
-        #token = response.json()["access_token"]
-        # token=spotify_access
-        url = "https://api.spotify.com/v1/search?q=track:" + \
-            data["songName"]+"+artist:"+data["artist"]+"&type=track%2Cartist"
-        # url = "https://api.spotify.com/v1/search?q=track:" + \
-        #     "Californication"+"+artist:"+"Red hot chilli peppers&type=track%2Cartist"
-        response_track = requests.get(
-            url, headers={'Authorization': 'Bearer '+token})
-        # track = ""
-        # try:
-        print("response_track", response_track)
-        print("response_track", response_track)
-        track = response_track.json()["tracks"]["items"][0]["album"]
-        # except:
-        #    track = "Sorry, couldnt get info of the song"
-        #   return {"message": "failed"}, 404
-        # return track
-        artist_name = track["artists"][0]["name"]
-        # song_name=track["name"]
-        image_url = track["images"][1]["url"]
-        track_id = response_track.json()["tracks"]["items"][0]["id"]
-
-        info_url = "https://api.spotify.com/v1/audio-analysis/{}".format(
-            track_id)
-
-        response_detailed = requests.get(
-            info_url, headers={'Authorization': 'Bearer '+token})
-
-        detailed_data = response_detailed.json()
-        tempo = round(detailed_data["track"]["tempo"])
-        key = MusicKeys.pitchClass[detailed_data["track"]["key"]]
-        mode = MusicKeys.mode[detailed_data["track"]["mode"]]
-        key = key+" "+mode
-
-        # print("response_detailed", response_detailed.json())
-        print("tempo", tempo)
-        print("key", detailed_data["track"]["key"])
-        print("image_url", image_url)
-        # return detailed_data
-        return {
-            "key": key,
-            "bpm": tempo,
-            "imgUrl": image_url,
-            "artist": artist_name
-        }
-        # except:
-        # return {"message": "failed"}, 404
-
-"""
-#  song = SongModel(data["name"], artist.id, user_id,
-        # data["first_key"],
-        # data["first_chord_progression"],
-        # data["second_key"],
-        # data["second_chord_progression"],
-        # data["learned_prcntg"],
-        # data["is_favorite"],
-        # data["is_my_song"],
-        # data["bpm"],
-        # data["capo"],
-        # data["song_text"],
-        # data["yt_link"],
-        # data["chords_website_link"],
-        # data["acoustic"],
-        # data["electric"],
-        # data["difficulty"],
-        # data["last_viewed"])
