@@ -130,7 +130,7 @@ class SongModel(db.Model):
 
     @classmethod
     def find_all_user_songs(cls, user_id):  
-        return cls.query.filter_by(user_id=user_id).order_by(cls.last_viewed.desc())
+        return cls.query.filter_by(user_id=user_id).order_by(cls.id.desc())
         # .all()
 
     @classmethod
