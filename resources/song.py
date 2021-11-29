@@ -14,6 +14,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 spotify_access = "BQAuiTFBpAgQo6EGRAIVzHHFRNodoL835TrvcIoEXY3Svj3PatJ6gUg3EtViRCF-BGB2JzWGe5ZPjQzk-ZU"
+
+
 def refreshSpotifyAcess():
     response = requests.post(
         'https://accounts.spotify.com/api/token',
@@ -27,6 +29,7 @@ def refreshSpotifyAcess():
         return spotify_access
     except:
         return None
+
 
 class MusicKeys(Resource):
     pitchClass = ["C", "C#", "D", "D#", "E",
@@ -220,9 +223,9 @@ class Song(Resource):
         if artist is None:
             artist = ArtistModel(data["artist"], user.id)
             global spotify_access
-            if(artist.insertImgUrl(spotify_access)=="expired"):
+            if(artist.insertImgUrl(spotify_access) == "expired"):
                 print("token expired")
-                spotify_access=refreshSpotifyAcess()
+                spotify_access = refreshSpotifyAcess()
                 artist.insertImgUrl(spotify_access)
             try:
                 artist.save_to_db()
@@ -388,6 +391,7 @@ class SpotifyInfo(Resource):
             track_id = response.json()["tracks"]["items"][0]["id"]
             info_url = "https://api.spotify.com/v1/audio-analysis/{}".format(
                 track_id)
+            song_name=response.json()["tracks"]["items"][0]["name"]
         else:
             return None
         response_detailed = requests.get(
@@ -402,20 +406,23 @@ class SpotifyInfo(Resource):
                 "key": key,
                 "bpm": tempo,
                 "imgUrl": image_url,
-                "artist": artist_name
+                "artist": artist_name,
+                "songName":song_name
             }
         return None
 
     def post(self):
         data = SpotifyInfo.parser.parse_args()
+
         global spotify_access
+        spotify_data = None
         try:
             spotify_data = self.getTrackInfo(
                 data["songName"], data["artist"], spotify_access)
         except:
             # return {"message": "something went wrong"}, 404
             pass
-        if not spotify_data:
+        if spotify_data == None:
             try:
                 response = refreshSpotifyAcess()
                 spotify_access = response
