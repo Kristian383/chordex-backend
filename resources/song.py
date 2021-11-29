@@ -13,7 +13,20 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-
+spotify_access = "BQAuiTFBpAgQo6EGRAIVzHHFRNodoL835TrvcIoEXY3Svj3PatJ6gUg3EtViRCF-BGB2JzWGe5ZPjQzk-ZU"
+def refreshSpotifyAcess():
+    response = requests.post(
+        'https://accounts.spotify.com/api/token',
+        data={'grant_type': 'client_credentials'},
+        headers={
+            'Authorization': 'Basic '+os.environ.get("API_TOGETHER")}
+    )
+    try:
+        global spotify_access
+        spotify_access = response.json()["access_token"]
+        return spotify_access
+    except:
+        return None
 
 class MusicKeys(Resource):
     pitchClass = ["C", "C#", "D", "D#", "E",
@@ -206,13 +219,15 @@ class Song(Resource):
 
         if artist is None:
             artist = ArtistModel(data["artist"], user.id)
+            global spotify_access
+            if(artist.insertImgUrl(spotify_access)=="expired"):
+                print("token expired")
+                spotify_access=refreshSpotifyAcess()
+                artist.insertImgUrl(spotify_access)
             try:
                 artist.save_to_db()
             except:
                 return {"message": "An error occured inserting an artist."}, 500
-
-        # msg=SongModel.checkIfArtistHasSong(artist.id, user.id,data["songName"])
-        # return {"msg":msg}
 
         song = SongModel(data["songName"], artist.id, user.id,
                          data["firstKey"],
@@ -237,9 +252,7 @@ class Song(Resource):
                          data["imgUrl"]
 
                          )
-        # firstKeyNotes
-        # secondKeyNotes
-        # return {"msg":song.json()}
+
         try:
             song.save_to_db()
         except:
@@ -342,8 +355,6 @@ class UsersSongList(Resource):
         return {"songs": songs}
 
 
-spotify_access="BQAuiTFBpAgQo6EGRAIVzHHFRNodoL835TrvcIoEXY3Svj3PatJ6gUg3EtViRCF-BGB2JzWGe5ZPjQzk-ZU"
-
 class SpotifyInfo(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('songName',
@@ -357,7 +368,14 @@ class SpotifyInfo(Resource):
                         help="This field cannot be left blank!"
                         )
 
-    def getTrackInfo(self,song, artist, token):
+    def getArtistImg(self, artist, token):
+        url = "https://api.spotify.com/v1/search?q=artist:"+artist+"&type=artist&limit=1"
+        response = requests.get(
+            url, headers={'Authorization': 'Bearer '+token})
+        if response.ok:
+            return response.json()["artists"]["items"][0]["images"][-1]["url"]
+
+    def getTrackInfo(self, song, artist, token):
         url = "https://api.spotify.com/v1/search?q=track:" + \
             song+"+artist:"+artist+"&type=track%2Cartist"
 
@@ -370,13 +388,8 @@ class SpotifyInfo(Resource):
             track_id = response.json()["tracks"]["items"][0]["id"]
             info_url = "https://api.spotify.com/v1/audio-analysis/{}".format(
                 track_id)
-            print("OK")
-            print("OK")
         else:
-            print("ERROR")
-            print("ERROR")
             return None
-        # detailed request
         response_detailed = requests.get(
             info_url, headers={'Authorization': 'Bearer '+token})
         if response_detailed.ok:
@@ -385,7 +398,6 @@ class SpotifyInfo(Resource):
             key = MusicKeys.pitchClass[detailed_data["track"]["key"]]
             mode = MusicKeys.mode[detailed_data["track"]["mode"]]
             key = key+" "+mode
-            print("SVE U REDU VRACAm",key,tempo)
             return {
                 "key": key,
                 "bpm": tempo,
@@ -397,21 +409,20 @@ class SpotifyInfo(Resource):
     def post(self):
         data = SpotifyInfo.parser.parse_args()
         global spotify_access
-        spotify_data=self.getTrackInfo(data["songName"],data["artist"],spotify_access)
-        print("spotify_access",spotify_access)
+        try:
+            spotify_data = self.getTrackInfo(
+                data["songName"], data["artist"], spotify_access)
+        except:
+            # return {"message": "something went wrong"}, 404
+            pass
         if not spotify_data:
-            response = requests.post(
-                'https://accounts.spotify.com/api/token',
-                data={'grant_type': 'client_credentials'},
-                headers={
-                    'Authorization': 'Basic '+os.environ.get("API_TOGETHER")}
-            )
             try:
-                spotify_access = response.json()["access_token"]
-                spotify_data=self.getTrackInfo(data["songName"],data["artist"],spotify_access)
+                response = refreshSpotifyAcess()
+                spotify_access = response
+                spotify_data = self.getTrackInfo(
+                    data["songName"], data["artist"], spotify_access)
                 return spotify_data
             except:
-                return {"message":"something went wrong"},404
+                return {"message": "something went wrong"}, 404
 
         return spotify_data
-

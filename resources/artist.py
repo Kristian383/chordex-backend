@@ -54,6 +54,7 @@ class Artist(Resource):
         else:
             return {'message': 'Artist doesnt exist'}, 400
         return {'message': 'Artist deleted'}
+    
 
 
 class ArtistList(Resource):  # get all users artists with their info

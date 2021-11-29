@@ -1,5 +1,7 @@
 
 from db import db
+import requests
+
 
 class ArtistModel(db.Model):
     __tablename__ = "artist"
@@ -8,6 +10,7 @@ class ArtistModel(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     name = db.Column(db.String(50))
     songs = db.relationship("SongModel", lazy="dynamic", cascade="all")
+    img_url = db.Column(db.String(80))
 
     def __init__(self, name, user_id):
         self.name = name
@@ -17,7 +20,8 @@ class ArtistModel(db.Model):
         return {"name": self.name,
                 "artistId": self.id,
                 "userId": self.user_id,
-                "songs": [song.json() for song in self.songs.all()],
+                "artistImg": self.img_url
+                # "songs": [song.json() for song in self.songs.all()],
                 }
 
     def getArtistInfo(self):
@@ -25,6 +29,7 @@ class ArtistModel(db.Model):
             "name": self.name,
             "artistId": self.id,
             "userId": self.user_id,
+            "artistImg": self.img_url
         }
 
     def check_songs(self):
@@ -33,15 +38,33 @@ class ArtistModel(db.Model):
     @classmethod
     def find_by_name(cls, name, user_id):
         return cls.query.filter_by(user_id=user_id).filter_by(name=name).first()
-    
 
     @classmethod
-    def find_by_id(cls, artist_id,user_id):
+    def find_by_id(cls, artist_id, user_id):
         return cls.query.filter_by(user_id=user_id).filter_by(id=artist_id).first()
-    
+
     @classmethod
     def find_all(cls):
         return cls.query.all()
+
+    
+    def insertImgUrl(self, token):
+        try:
+            if token == None:
+                return
+            url = "https://api.spotify.com/v1/search?q=artist:"+self.name+"&type=artist&limit=1"
+            response = requests.get(
+                url, headers={'Authorization': 'Bearer '+token})
+        except:
+            print("COULDNT SAVE IMG_URL FOR ARTIST")
+            return "expired"
+        if response.ok:
+            img = response.json()["artists"]["items"][0]["images"][-1]["url"]
+            self.img_url = img
+            try:
+                self.save_to_db()
+            except:
+                return
 
     @classmethod
     def find_all_user_artists(cls, user_id):

@@ -1,4 +1,3 @@
-from collections import UserList
 from flask import Flask  # , jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
@@ -7,9 +6,9 @@ from flask_cors import CORS
 from datetime import timedelta
 
 
-from resources.user import UserRegister, User, UserList, UserLogin
+from resources.user import UserRegister,  UserLogin  # ,User, UserList,
 from resources.artist import ArtistList, ArtistUserList
-from resources.song import Song, SongList, UsersSongList, MusicKeys,SpotifyInfo
+from resources.song import Song, UsersSongList, MusicKeys, SpotifyInfo  # ,SongList
 from resources.website import Website, WebsiteList
 from resources.user_notes import UserNotes
 from resources.mails import ForgotPassword, ContactMe, PasswordReset
@@ -20,11 +19,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 app = Flask(__name__)
-
-# app.config["EMAIL_PASSWORD"]=os.environ.get("EMAIL_PASS")
-# app.config["EMAIL_ADRESS"]=os.environ.get("EMAIL_USER")
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -33,7 +28,6 @@ app.config["JWT_SECRET_KEY"] = os.environ.get("SECRET_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=14)
 
 api = Api(app)
-#mail = Mail(app)
 
 CORS(app)
 
