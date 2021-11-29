@@ -93,7 +93,7 @@ class ForgotPassword(Resource):
         msg = EmailMessage()
         msg["Subject"] = "Chordex - Password reset"
         msg["From"] = EMAIL_ADRESS
-        msg["To"] = email  # ovo staviti user.email
+        msg["To"] = user.email  # ovo staviti user.email
         token=user.get_reset_pass_token(user.id) 
         reset_link ="http://localhost:8080/resetpswd?token={0}&email={1}".format(token,user.email)
         # reset_link ="http://localhost:8080/resetpswd?token={}".format(token)
