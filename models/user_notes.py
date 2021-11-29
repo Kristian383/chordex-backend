@@ -7,7 +7,7 @@ class UserNotesModel(db.Model):
     txt_area_height = db.Column(db.Integer)
     username_id=db.Column(db.Integer, db.ForeignKey("user.id"))
 
-    def __init__(self, username_id,notes="", txt_area_height=400):
+    def __init__(self, username_id,notes="", txt_area_height=600):
         self.notes = notes
         self.txt_area_height = txt_area_height
         self.username_id = username_id
