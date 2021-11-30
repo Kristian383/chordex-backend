@@ -34,13 +34,13 @@ class ContactMe(Resource):
         message = data["message"]
         msg = EmailMessage()
         msg["Subject"] = "Chordex - Contact me"
-        msg["From"] = email
-        msg["To"] = "nenadovic.kristian@gmail.com"
-        msg.set_content(message)
+        msg["From"] = EMAIL_ADRESS
+        msg["To"] = EMAIL_ADRESS
+        content="From: "+email+"\n\n"+message
+        msg.set_content(content)
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
             try:
                 smtp.login(EMAIL_ADRESS, EMAIL_PASSWORD)
-
                 smtp.send_message(msg)
             except:
                 return {"message": "An error occured sending an message."}, 500
