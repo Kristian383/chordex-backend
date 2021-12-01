@@ -298,9 +298,6 @@ class Song(Resource):
             song.tuning = data["tuning"]
             song.last_viewed = data["lastViewed"]
             song.img_url = data["imgUrl"]
-            # change artist name
-            # artist=ArtistModel.find_by_id(song.artist_id,user.id)
-            # artist.name=data["artist"]
 
         try:
             song.save_to_db()
