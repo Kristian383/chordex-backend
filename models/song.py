@@ -15,10 +15,10 @@ class SongModel(db.Model):
 
     first_key = db.Column(db.String(20))
     first_key_notes = db.Column(db.String(30))
-    first_chord_progression = db.Column(db.String(40))
+    first_chord_progression = db.Column(db.String(100))
     second_key = db.Column(db.String(20))
     second_key_notes = db.Column(db.String(30))
-    second_chord_progression = db.Column(db.String(40))
+    second_chord_progression = db.Column(db.String(100))
 
     learned_prcntg = db.Column(db.Integer)
     is_favorite = db.Column(db.Boolean)
