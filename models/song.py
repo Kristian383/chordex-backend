@@ -2,6 +2,7 @@
 from db import db
 
 #from models.artist import ArtistModel
+from sqlalchemy import func
 
 
 class SongModel(db.Model):
@@ -118,7 +119,10 @@ class SongModel(db.Model):
 
     @classmethod
     def checkIfArtistHasSong(cls, artist_id, user_id, name):
-        return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter_by(name=name).first()
+        # return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter_by(name=name).first()
+        song=cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter(func.lower(cls.name)==func.lower(name))#.first()
+        #print(song)
+        return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter(func.lower(cls.name)==func.lower(name)).first()
 
     @classmethod
     def find_by_id(cls, song_id, user_id):
