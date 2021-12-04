@@ -3,7 +3,8 @@ from db import db
 class UserNotesModel(db.Model):
     __tablename__ = "user_notes"
     id = db.Column(db.Integer, primary_key=True)
-    notes = db.Column(db.String(8000))
+    notes = db.Column(db.String(10000))
+    # notes = db.Column(db.Text)
     txt_area_height = db.Column(db.Integer)
     username_id=db.Column(db.Integer, db.ForeignKey("user.id"))
 
