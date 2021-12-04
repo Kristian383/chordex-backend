@@ -27,7 +27,7 @@ class SongModel(db.Model):
     bpm = db.Column(db.Integer)
     capo = db.Column(db.Integer)
     # ovo su song notes pa povecati vjv
-    song_text = db.Column(db.String(2500))
+    song_text = db.Column(db.String(3500))
     yt_link = db.Column(db.String(150))
     chords_website_link = db.Column(db.String(150))
     acoustic = db.Column(db.Boolean)
