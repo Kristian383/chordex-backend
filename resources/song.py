@@ -218,6 +218,7 @@ class Song(Resource):
         artist = ArtistModel.find_by_name(data["artist"], user.id)
 
         if artist and SongModel.checkIfArtistHasSong(artist.id, user.id, data["songName"]):
+            
             return {'message': "Artist '{0}' already has a song with name '{1}'.".format(data["artist"], data["songName"])}, 400
 
         if artist is None:
@@ -302,7 +303,7 @@ class Song(Resource):
         try:
             song.save_to_db()
             # artist.save_to_db()
-            return {'message': 'Song updated', "updated": song.json()}, 200
+            return {'message': 'Song updated', "song": song.json()}, 200
         except:
             return {"message": "An error occured deleting the song."}, 500
 
