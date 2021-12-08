@@ -1,6 +1,7 @@
 
 from db import db
 import requests
+from sqlalchemy import func
 
 
 class ArtistModel(db.Model):
@@ -37,7 +38,8 @@ class ArtistModel(db.Model):
 
     @classmethod
     def find_by_name(cls, name, user_id):
-        return cls.query.filter_by(user_id=user_id).filter_by(name=name).first()
+        # return cls.query.filter_by(user_id=user_id).filter_by(name=name).first()
+        return cls.query.filter_by(user_id=user_id).filter(func.lower(cls.name)==func.lower(name)).first()
 
     @classmethod
     def find_by_id(cls, artist_id, user_id):

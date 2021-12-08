@@ -218,7 +218,7 @@ class Song(Resource):
         artist = ArtistModel.find_by_name(data["artist"], user.id)
 
         if artist and SongModel.checkIfArtistHasSong(artist.id, user.id, data["songName"]):
-            
+
             return {'message': "Artist '{0}' already has a song with name '{1}'.".format(data["artist"], data["songName"])}, 400
 
         if artist is None:
@@ -313,7 +313,6 @@ class Song(Resource):
 
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
-
         song = SongModel.find_by_name(data["songName"], user.id)
         if song:
             try:
@@ -389,7 +388,7 @@ class SpotifyInfo(Resource):
             track_id = response.json()["tracks"]["items"][0]["id"]
             info_url = "https://api.spotify.com/v1/audio-analysis/{}".format(
                 track_id)
-            song_name=response.json()["tracks"]["items"][0]["name"]
+            song_name = response.json()["tracks"]["items"][0]["name"]
         else:
             return None
         response_detailed = requests.get(
@@ -405,7 +404,7 @@ class SpotifyInfo(Resource):
                 "bpm": tempo,
                 "imgUrl": image_url,
                 "artist": artist_name,
-                "songName":song_name
+                "songName": song_name
             }
         return None
 

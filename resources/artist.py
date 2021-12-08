@@ -54,7 +54,6 @@ class Artist(Resource):
         else:
             return {'message': 'Artist doesnt exist'}, 400
         return {'message': 'Artist deleted'}
-    
 
 
 class ArtistList(Resource):  # get all users artists with their info
@@ -86,6 +85,7 @@ class ArtistUserList(Resource):  # ovo vraca pjesme jednog artista
                         help="This field cannot be left blank!"
                         )
     # @jwt_required()
+
     def get(self, username):
         data = ArtistUserList.parser.parse_args()
         user = UserModel.find_by_username(username)
