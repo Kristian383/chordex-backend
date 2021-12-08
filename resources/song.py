@@ -232,6 +232,11 @@ class Song(Resource):
                 artist.save_to_db()
             except:
                 return {"message": "An error occured inserting an artist."}, 500
+        img_url=""
+        if data["imgUrl"] == "":
+            img_url=artist.img_url
+        else:
+            img_url=data["imgUrl"]
 
         song = SongModel(data["songName"], artist.id, user.id,
                          data["firstKey"],
@@ -253,7 +258,8 @@ class Song(Resource):
                          data["difficulty"],
                          data["tuning"],
                          data["lastViewed"],
-                         data["imgUrl"]
+                         img_url
+                        #  data["imgUrl"]
 
                          )
 
@@ -368,12 +374,12 @@ class SpotifyInfo(Resource):
                         help="This field cannot be left blank!"
                         )
 
-    def getArtistImg(self, artist, token):
-        url = "https://api.spotify.com/v1/search?q=artist:"+artist+"&type=artist&limit=1"
-        response = requests.get(
-            url, headers={'Authorization': 'Bearer '+token})
-        if response.ok:
-            return response.json()["artists"]["items"][0]["images"][-1]["url"]
+    # def getArtistImg(self, artist, token):
+    #     url = "https://api.spotify.com/v1/search?q=artist:"+artist+"&type=artist&limit=1"
+    #     response = requests.get(
+    #         url, headers={'Authorization': 'Bearer '+token})
+    #     if response.ok:
+    #         return response.json()["artists"]["items"][0]["images"][-1]["url"]
 
     def getTrackInfo(self, song, artist, token):
         url = "https://api.spotify.com/v1/search?q=track:" + \
