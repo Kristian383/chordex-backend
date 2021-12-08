@@ -115,8 +115,6 @@ class SongModel(db.Model):
 
     @classmethod
     def find_by_name(cls, name, user_id):
-        print("nameeee",name)
-        
         return cls.query.filter_by(user_id=user_id).filter(func.lower(cls.name)==func.lower(name)).first()
 
     @classmethod
