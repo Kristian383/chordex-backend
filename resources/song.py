@@ -224,7 +224,7 @@ class Song(Resource):
         if artist is None:
             artist = ArtistModel(data["artist"], user.id)
             global spotify_access
-            if(artist.insertImgUrl(spotify_access) == "expired"):
+            if( (data["isMySong"] != True) and artist.insertImgUrl(spotify_access) == "expired"):
                 print("token expired")
                 spotify_access = refreshSpotifyAcess()
                 artist.insertImgUrl(spotify_access)
@@ -237,6 +237,11 @@ class Song(Resource):
             img_url=artist.img_url
         else:
             img_url=data["imgUrl"]
+
+        # try:
+        #     artist.save_to_db()
+        # except:
+        #     return {"message": "An error occured inserting an artist img."}, 500
 
         song = SongModel(data["songName"], artist.id, user.id,
                          data["firstKey"],
