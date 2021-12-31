@@ -21,18 +21,16 @@ class UserModel(db.Model):
     websites = db.relationship("WebsiteModel", lazy="dynamic")
 
     # number_of_songs = db.Column(db.Integer)
-    # number_of_my_songs = db.Column(db.Integer)
-    # number_of_artists = db.Column(db.Integer)
 
     def json(self):
         return {"username": self.username,
                 "id": self.id,
                 "email": self.email,
                 "songs": [song.json() for song in self.songs.all()],
-                "websites": [website.json() for website in self.websites.all()],
-                "numOfSongs": self.number_of_songs,
-                "numOfMySongs": self.number_of_my_songs,
-                "numOfArtists": self.number_of_artists,
+                "websites": [website.json() for website in self.websites.all()]
+                # "numOfSongs": self.number_of_songs,
+                # "numOfMySongs": self.number_of_my_songs,
+                # "numOfArtists": self.number_of_artists,
                 }
 
     def __init__(self, username, password, email):
@@ -85,3 +83,13 @@ class UserModel(db.Model):
             return None
 
         return cls.find_by_id(user_id)
+
+    def count_all_user_songs(self):
+        return len(self.songs.all())
+
+    def userHasBenefits(self):
+        if self.email == "kristian383@gmail.com":
+            return True
+        return False
+        
+
