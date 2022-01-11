@@ -1,7 +1,6 @@
-
 from db import db
 
-#from models.artist import ArtistModel
+# from models.artist import ArtistModel
 from sqlalchemy import func
 
 
@@ -36,32 +35,33 @@ class SongModel(db.Model):
     tuning = db.Column(db.String(20))
     last_viewed = db.Column(db.String(40))
     img_url = db.Column(db.String(100))
-    
 
-    def __init__(self, name,
-                 artist_id,
-                 user_id,
-                 first_key=None,
-                 first_key_notes=None,
-                 first_chord_progression=None,
-                 second_key=None,
-                 second_key_notes=None,
-                 second_chord_progression=None,
-                 learned_prcntg=None,
-                 is_favorite=None,
-                 is_my_song=None,
-                 bpm=None,
-                 capo=None,
-                 song_text=None,
-                 yt_link=None,
-                 chords_website_link=None,
-                 acoustic=None,
-                 electric=None,
-                 difficulty=None,
-                 tuning=None,
-                 last_viewed=None,
-                 img_url=None
-                 ):
+    def __init__(
+        self,
+        name,
+        artist_id,
+        user_id,
+        first_key=None,
+        first_key_notes=None,
+        first_chord_progression=None,
+        second_key=None,
+        second_key_notes=None,
+        second_chord_progression=None,
+        learned_prcntg=None,
+        is_favorite=None,
+        is_my_song=None,
+        bpm=None,
+        capo=None,
+        song_text=None,
+        yt_link=None,
+        chords_website_link=None,
+        acoustic=None,
+        electric=None,
+        difficulty=None,
+        tuning=None,
+        last_viewed=None,
+        img_url=None,
+    ):
         self.name = name
         self.artist_id = artist_id
         self.user_id = user_id
@@ -87,42 +87,52 @@ class SongModel(db.Model):
         self.img_url = img_url
 
     def json(self):
-        return {"songName": self.name,
-                "songId": self.id,
-                "artistId": self.artist_id,
-                "userId": self.user_id,
-                "firstKey": self.first_key,
-                "firstKeyNotes": self.first_key_notes,
-                "firstChordProgression": self.first_chord_progression,
-                "secondKey": self.second_key,
-                "secondKeyNotes": self.second_key_notes,
-                "secondChordProgression": self.second_chord_progression,
-                "practicedPrcntg": self.learned_prcntg,
-                "isFavorite": self.is_favorite,
-                "isMySong": self.is_my_song,
-                "bpm": self.bpm,
-                "songText": self.song_text,
-                "ytLink": self.yt_link,
-                "chordsWebsiteLink": self.chords_website_link,
-                "acoustic": self.acoustic,
-                "electric": self.electric,
-                "difficulty": self.difficulty,
-                "capo": self.capo,
-                "tuning": self.tuning,
-                "lastViewed": self.last_viewed,
-                "imgUrl": self.img_url
-                }
+        return {
+            "songName": self.name,
+            "songId": self.id,
+            "artistId": self.artist_id,
+            "userId": self.user_id,
+            "firstKey": self.first_key,
+            "firstKeyNotes": self.first_key_notes,
+            "firstChordProgression": self.first_chord_progression,
+            "secondKey": self.second_key,
+            "secondKeyNotes": self.second_key_notes,
+            "secondChordProgression": self.second_chord_progression,
+            "practicedPrcntg": self.learned_prcntg,
+            "isFavorite": self.is_favorite,
+            "isMySong": self.is_my_song,
+            "bpm": self.bpm,
+            "songText": self.song_text,
+            "ytLink": self.yt_link,
+            "chordsWebsiteLink": self.chords_website_link,
+            "acoustic": self.acoustic,
+            "electric": self.electric,
+            "difficulty": self.difficulty,
+            "capo": self.capo,
+            "tuning": self.tuning,
+            "lastViewed": self.last_viewed,
+            "imgUrl": self.img_url,
+        }
 
     @classmethod
     def find_by_name(cls, name, user_id):
-        return cls.query.filter_by(user_id=user_id).filter(func.lower(cls.name)==func.lower(name)).first()
+        return (
+            cls.query.filter_by(user_id=user_id)
+            .filter(func.lower(cls.name) == func.lower(name))
+            .first()
+        )
 
     @classmethod
     def checkIfArtistHasSong(cls, artist_id, user_id, name):
         # return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter_by(name=name).first()
-        #song=cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter(func.lower(cls.name)==func.lower(name))#.first()
-        #print(song)
-        return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter(func.lower(cls.name)==func.lower(name)).first()
+        # song=cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter(func.lower(cls.name)==func.lower(name))#.first()
+        # print(song)
+        return (
+            cls.query.filter_by(user_id=user_id)
+            .filter_by(artist_id=artist_id)
+            .filter(func.lower(cls.name) == func.lower(name))
+            .first()
+        )
 
     @classmethod
     def find_by_id(cls, song_id, user_id):
@@ -133,13 +143,17 @@ class SongModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find_all_user_songs(cls, user_id):  
+    def find_all_user_songs(cls, user_id):
         return cls.query.filter_by(user_id=user_id).order_by(cls.id.desc())
         # .all()
 
     @classmethod
     def find_all_user_my_songs(cls, user_id):
-        return cls.query.filter_by(user_id=user_id).filter_by(is_my_song=True).order_by(cls.id.desc())
+        return (
+            cls.query.filter_by(user_id=user_id)
+            .filter_by(is_my_song=True)
+            .order_by(cls.id.desc())
+        )
 
     @classmethod
     def find_all_user_songs_by_artist(cls, user_id, artist_id):
@@ -147,7 +161,9 @@ class SongModel(db.Model):
 
     @classmethod
     def count_all_user_songs_by_artist(cls, user_id, artist_id):
-        return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).count()
+        return (
+            cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).count()
+        )
 
     def save_to_db(self):
         db.session.add(self)

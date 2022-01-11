@@ -1,10 +1,11 @@
-#import flask
+# import flask
 # from flask.json import jsonify
 from flask_restful import Resource, reqparse
 from models.song import SongModel
 from models.artist import ArtistModel
 from models.user import UserModel
 from flask_jwt_extended import jwt_required
+
 # from flask import request
 import requests
 import json
@@ -18,10 +19,9 @@ spotify_access = ""
 
 def refreshSpotifyAcess():
     response = requests.post(
-        'https://accounts.spotify.com/api/token',
-        data={'grant_type': 'client_credentials'},
-        headers={
-            'Authorization': 'Basic '+os.environ.get("API_TOGETHER")}
+        "https://accounts.spotify.com/api/token",
+        data={"grant_type": "client_credentials"},
+        headers={"Authorization": "Basic " + os.environ.get("API_TOGETHER")},
     )
     try:
         global spotify_access
@@ -32,39 +32,85 @@ def refreshSpotifyAcess():
 
 
 class MusicKeys(Resource):
-    pitchClass = ["C", "C#", "D", "D#", "E",
-                  "F", "F#", "G", "G#", "A", "A#", "B"]
+    pitchClass = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
     mode = ["minor", "major"]
     musicKeys = [
-        {"key": "C", "relativeMinor": "A", "notes": [
-            "C", "D", "E", "F", "G", "A", "B"]},
-        {"key": "G", "relativeMinor": "E", "notes": [
-            "G", "A", "B", "C", "D", "E", "F#"]},
-        {"key": "D", "relativeMinor": "B", "notes": [
-            "D", "E", "F#", "G", "A", "B", "C#"]},
-        {"key": "A", "relativeMinor": "F#", "notes": [
-            "A", "B", "C#", "D", "E", "F#", "G#"]},
-        {"key": "E", "relativeMinor": "C#", "notes": [
-            "E", "F#", "G#", "A", "B", "C#", "D#"]},
-        {"key": "B", "relativeMinor": "G#", "notes": [
-            "B", "C#", "D#", "E", "F#", "G#", "A#"]},
-        {"key": "F#", "relativeMinor": "D#", "notes": [
-            "F#", "G#", "A#", "B", "C#", "D#", "E#"]},
-        {"key": "C#", "relativeMinor": "A#", "notes": [
-            "C#", "D#", "E#", "F#", "G#", "A#", "B#"]},
-        {"key": "F", "relativeMinor": "D", "notes": [
-            "F", "G", "A", "Bb", "C", "D", "E"]},
-        {"key": "Bb", "relativeMinor": "G", "notes": [
-            "Bb", "C", "D", "Eb", "F", "G", "A"]},
-        {"key": "Eb", "relativeMinor": "C", "notes": [
-            "Eb", "F", "G", "Ab", "Bb", "C", "D"]},
-        {"key": "Ab", "relativeMinor": "F", "notes": [
-            "Ab", "Bb", "C", "Db", "Eb", "F", "G"]},
-        {"key": "Db", "relativeMinor": "Bb", "notes": [
-            "Db", "Eb", "F", "Gb", "Ab", "Bb", "C"]},
-        {"key": "Gb", "relativeMinor": "Eb", "notes": [
-            "Gb", "Ab", "Bb", "Cb", "Db", "Eb", "F"]},
-        {"key": "Cb", "relativeMinor": "Ab", "notes": ["Cb", "Db", "Eb", "Fb", "Gb", "Ab", "Bb"]}]
+        {
+            "key": "C",
+            "relativeMinor": "A",
+            "notes": ["C", "D", "E", "F", "G", "A", "B"],
+        },
+        {
+            "key": "G",
+            "relativeMinor": "E",
+            "notes": ["G", "A", "B", "C", "D", "E", "F#"],
+        },
+        {
+            "key": "D",
+            "relativeMinor": "B",
+            "notes": ["D", "E", "F#", "G", "A", "B", "C#"],
+        },
+        {
+            "key": "A",
+            "relativeMinor": "F#",
+            "notes": ["A", "B", "C#", "D", "E", "F#", "G#"],
+        },
+        {
+            "key": "E",
+            "relativeMinor": "C#",
+            "notes": ["E", "F#", "G#", "A", "B", "C#", "D#"],
+        },
+        {
+            "key": "B",
+            "relativeMinor": "G#",
+            "notes": ["B", "C#", "D#", "E", "F#", "G#", "A#"],
+        },
+        {
+            "key": "F#",
+            "relativeMinor": "D#",
+            "notes": ["F#", "G#", "A#", "B", "C#", "D#", "E#"],
+        },
+        {
+            "key": "C#",
+            "relativeMinor": "A#",
+            "notes": ["C#", "D#", "E#", "F#", "G#", "A#", "B#"],
+        },
+        {
+            "key": "F",
+            "relativeMinor": "D",
+            "notes": ["F", "G", "A", "Bb", "C", "D", "E"],
+        },
+        {
+            "key": "Bb",
+            "relativeMinor": "G",
+            "notes": ["Bb", "C", "D", "Eb", "F", "G", "A"],
+        },
+        {
+            "key": "Eb",
+            "relativeMinor": "C",
+            "notes": ["Eb", "F", "G", "Ab", "Bb", "C", "D"],
+        },
+        {
+            "key": "Ab",
+            "relativeMinor": "F",
+            "notes": ["Ab", "Bb", "C", "Db", "Eb", "F", "G"],
+        },
+        {
+            "key": "Db",
+            "relativeMinor": "Bb",
+            "notes": ["Db", "Eb", "F", "Gb", "Ab", "Bb", "C"],
+        },
+        {
+            "key": "Gb",
+            "relativeMinor": "Eb",
+            "notes": ["Gb", "Ab", "Bb", "Cb", "Db", "Eb", "F"],
+        },
+        {
+            "key": "Cb",
+            "relativeMinor": "Ab",
+            "notes": ["Cb", "Db", "Eb", "Fb", "Gb", "Ab", "Bb"],
+        },
+    ]
 
     def get(self):
         return {"musicKeys": self.musicKeys}
@@ -72,126 +118,96 @@ class MusicKeys(Resource):
 
 class Song(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('songName',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('artist',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('username',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('firstKey',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('firstKeyNotes',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('secondKeyNotes',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('firstChordProgression',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('secondKey',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('secondChordProgression',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('practicedPrcntg',
-                        type=int,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('isFavorite',
-                        type=bool,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('isMySong',
-                        type=bool,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('bpm',
-                        type=int,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('capo',
-                        type=int,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('songText',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('ytLink',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('chordsWebsiteLink',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('acoustic',
-                        type=bool,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('electric',
-                        type=bool,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('difficulty',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('tuning',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('lastViewed',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('songId',
-                        type=int,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('imgUrl',
-                        type=str,
-                        required=False,
-                        help="This field cannot be left blank!"
-                        )
+    parser.add_argument(
+        "songName", type=str, required=True, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "artist", type=str, required=True, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "username", type=str, required=True, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "firstKey", type=str, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "firstKeyNotes",
+        type=str,
+        required=False,
+        help="This field cannot be left blank!",
+    )
+    parser.add_argument(
+        "secondKeyNotes",
+        type=str,
+        required=False,
+        help="This field cannot be left blank!",
+    )
+    parser.add_argument(
+        "firstChordProgression",
+        type=str,
+        required=False,
+        help="This field cannot be left blank!",
+    )
+    parser.add_argument(
+        "secondKey", type=str, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "secondChordProgression",
+        type=str,
+        required=False,
+        help="This field cannot be left blank!",
+    )
+    parser.add_argument(
+        "practicedPrcntg",
+        type=int,
+        required=False,
+        help="This field cannot be left blank!",
+    )
+    parser.add_argument(
+        "isFavorite", type=bool, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "isMySong", type=bool, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "bpm", type=int, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "capo", type=int, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "songText", type=str, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "ytLink", type=str, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "chordsWebsiteLink",
+        type=str,
+        required=False,
+        help="This field cannot be left blank!",
+    )
+    parser.add_argument(
+        "acoustic", type=bool, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "electric", type=bool, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "difficulty", type=str, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "tuning", type=str, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "lastViewed", type=str, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "songId", type=int, required=False, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "imgUrl", type=str, required=False, help="This field cannot be left blank!"
+    )
 
     def get(self, name, username):
         user = UserModel.find_by_username(username)
@@ -206,6 +222,7 @@ class Song(Resource):
         if song:
             return song.json()
         return name
+
     # @jwt_required()
 
     def post(self, username):
@@ -215,19 +232,27 @@ class Song(Resource):
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
 
-        if user.userHasBenefits()==False and user.count_all_user_songs() >= 40:
+        if user.userHasBenefits() == False and user.count_all_user_songs() >= 50:
             return {"message": "Limit of songs exceeded"}, 400
 
         artist = ArtistModel.find_by_name(data["artist"], user.id)
 
-        if artist and SongModel.checkIfArtistHasSong(artist.id, user.id, data["songName"]):
+        if artist and SongModel.checkIfArtistHasSong(
+            artist.id, user.id, data["songName"]
+        ):
 
-            return {'message': "Artist '{0}' already has a song with name '{1}'.".format(data["artist"], data["songName"])}, 400
+            return {
+                "message": "Artist '{0}' already has a song with name '{1}'.".format(
+                    data["artist"], data["songName"]
+                )
+            }, 400
 
         if artist is None:
             artist = ArtistModel(data["artist"], user.id)
             global spotify_access
-            if( (data["isMySong"] != True) and artist.insertImgUrl(spotify_access) == "expired"):
+            if (data["isMySong"] != True) and artist.insertImgUrl(
+                spotify_access
+            ) == "expired":
                 print("token expired")
                 spotify_access = refreshSpotifyAcess()
                 artist.insertImgUrl(spotify_access)
@@ -235,51 +260,50 @@ class Song(Resource):
                 artist.save_to_db()
             except:
                 return {"message": "An error occured inserting an artist."}, 500
-        img_url=""
+        img_url = ""
         if data["imgUrl"] == "":
-            img_url=artist.img_url
+            img_url = artist.img_url
         else:
-            img_url=data["imgUrl"]
+            img_url = data["imgUrl"]
 
         # try:
         #     artist.save_to_db()
         # except:
         #     return {"message": "An error occured inserting an artist img."}, 500
 
-        song = SongModel(data["songName"], artist.id, user.id,
-                         data["firstKey"],
-                         data["firstKeyNotes"],
-                         data["firstChordProgression"],
-                         data["secondKey"],
-                         data["secondKeyNotes"],
-                         data["secondChordProgression"],
-                         data["practicedPrcntg"],
-                         data["isFavorite"],
-                         data["isMySong"],
-                         data["bpm"],
-                         data["capo"],
-                         data["songText"],
-                         data["ytLink"],
-                         data["chordsWebsiteLink"],
-                         data["acoustic"],
-                         data["electric"],
-                         data["difficulty"],
-                         data["tuning"],
-                         data["lastViewed"],
-                         img_url
-                        #  data["imgUrl"]
-
-                         )
+        song = SongModel(
+            data["songName"],
+            artist.id,
+            user.id,
+            data["firstKey"],
+            data["firstKeyNotes"],
+            data["firstChordProgression"],
+            data["secondKey"],
+            data["secondKeyNotes"],
+            data["secondChordProgression"],
+            data["practicedPrcntg"],
+            data["isFavorite"],
+            data["isMySong"],
+            data["bpm"],
+            data["capo"],
+            data["songText"],
+            data["ytLink"],
+            data["chordsWebsiteLink"],
+            data["acoustic"],
+            data["electric"],
+            data["difficulty"],
+            data["tuning"],
+            data["lastViewed"],
+            img_url
+            #  data["imgUrl"]
+        )
 
         try:
             song.save_to_db()
         except:
             return {"message": "An error occured inserting a song."}, 500
         resp = artist.json()
-        return {
-            "song": song.json(),
-            "artist": resp
-        }, 201
+        return {"song": song.json(), "artist": resp}, 201
 
     def put(self, username):
         data = Song.parser.parse_args()
@@ -317,7 +341,7 @@ class Song(Resource):
         try:
             song.save_to_db()
             # artist.save_to_db()
-            return {'message': 'Song updated', "song": song.json()}, 200
+            return {"message": "Song updated", "song": song.json()}, 200
         except:
             return {"message": "An error occured deleting the song."}, 500
 
@@ -336,11 +360,12 @@ class Song(Resource):
                     artist.delete_from_db()
                     return {"message": "Song and Artist deleted"}, 200
 
-                return {'message': 'Song deleted'}, 200
+                return {"message": "Song deleted"}, 200
             except:
                 return {"message": "An error occured deleting the song."}, 500
         else:
-            return {'message': 'Song doesnt exist'}, 400
+            return {"message": "Song doesnt exist"}, 400
+
 
 # admin routes
 
@@ -353,13 +378,14 @@ class SongList(Resource):
 class UsersSongList(Resource):
     # @jwt_required()
     def get(self, username):
-        #numOfLoads = int(request.args["numOfLoads"])
+        # numOfLoads = int(request.args["numOfLoads"])
         user = UserModel.find_by_username(username)
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
         # return {"numOfLoads":queryStringRaw}
-        songs = [song.json()
-                 for song in SongModel.find_all_user_songs(user.id)]  # ,numOfLoads
+        songs = [
+            song.json() for song in SongModel.find_all_user_songs(user.id)
+        ]  # ,numOfLoads
 
         # artists=[]
         for song in songs:
@@ -371,16 +397,12 @@ class UsersSongList(Resource):
 
 class SpotifyInfo(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('songName',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('artist',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
+    parser.add_argument(
+        "songName", type=str, required=True, help="This field cannot be left blank!"
+    )
+    parser.add_argument(
+        "artist", type=str, required=True, help="This field cannot be left blank!"
+    )
 
     # def getArtistImg(self, artist, token):
     #     url = "https://api.spotify.com/v1/search?q=artist:"+artist+"&type=artist&limit=1"
@@ -390,35 +412,39 @@ class SpotifyInfo(Resource):
     #         return response.json()["artists"]["items"][0]["images"][-1]["url"]
 
     def getTrackInfo(self, song, artist, token):
-        url = "https://api.spotify.com/v1/search?q=track:" + \
-            song+"+artist:"+artist+"&type=track%2Cartist"
+        url = (
+            "https://api.spotify.com/v1/search?q=track:"
+            + song
+            + "+artist:"
+            + artist
+            + "&type=track%2Cartist"
+        )
 
-        response = requests.get(
-            url, headers={'Authorization': 'Bearer '+token})
+        response = requests.get(url, headers={"Authorization": "Bearer " + token})
         if response.ok:
             track = response.json()["tracks"]["items"][0]["album"]
             artist_name = track["artists"][0]["name"]
             image_url = track["images"][1]["url"]
             track_id = response.json()["tracks"]["items"][0]["id"]
-            info_url = "https://api.spotify.com/v1/audio-analysis/{}".format(
-                track_id)
+            info_url = "https://api.spotify.com/v1/audio-analysis/{}".format(track_id)
             song_name = response.json()["tracks"]["items"][0]["name"]
         else:
             return None
         response_detailed = requests.get(
-            info_url, headers={'Authorization': 'Bearer '+token})
+            info_url, headers={"Authorization": "Bearer " + token}
+        )
         if response_detailed.ok:
             detailed_data = response_detailed.json()
             tempo = round(detailed_data["track"]["tempo"])
             key = MusicKeys.pitchClass[detailed_data["track"]["key"]]
             mode = MusicKeys.mode[detailed_data["track"]["mode"]]
-            key = key+" "+mode
+            key = key + " " + mode
             return {
                 "key": key,
                 "bpm": tempo,
                 "imgUrl": image_url,
                 "artist": artist_name,
-                "songName": song_name
+                "songName": song_name,
             }
         return None
 
@@ -429,7 +455,8 @@ class SpotifyInfo(Resource):
         spotify_data = None
         try:
             spotify_data = self.getTrackInfo(
-                data["songName"], data["artist"], spotify_access)
+                data["songName"], data["artist"], spotify_access
+            )
         except:
             # return {"message": "something went wrong"}, 404
             pass
@@ -438,7 +465,8 @@ class SpotifyInfo(Resource):
                 response = refreshSpotifyAcess()
                 spotify_access = response
                 spotify_data = self.getTrackInfo(
-                    data["songName"], data["artist"], spotify_access)
+                    data["songName"], data["artist"], spotify_access
+                )
                 return spotify_data
             except:
                 return {"message": "something went wrong"}, 404
