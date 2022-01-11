@@ -88,7 +88,7 @@ class UserModel(db.Model):
         return len(self.songs.all())
 
     def userHasBenefits(self):
-        if self.email == "kristian383@gmail.com":
+        if self.id in [1,2]:
             return True
         return False
         
