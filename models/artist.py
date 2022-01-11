@@ -61,9 +61,9 @@ class ArtistModel(db.Model):
             print("COULDNT SAVE IMG_URL FOR ARTIST")
             return "expired"
         if response.ok:
-            img = response.json()["artists"]["items"][0]["images"][1]["url"]
-            self.img_url = img
             try:
+                img = response.json()["artists"]["items"][0]["images"][1]["url"]
+                self.img_url = img
                 self.save_to_db()
             except:
                 return
