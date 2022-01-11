@@ -32,7 +32,8 @@ def refreshSpotifyAcess():
 
 
 class MusicKeys(Resource):
-    pitchClass = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+    pitchClass = ["C", "C#", "D", "D#", "E",
+                  "F", "F#", "G", "G#", "A", "A#", "B"]
     mode = ["minor", "major"]
     musicKeys = [
         {
@@ -351,10 +352,11 @@ class Song(Resource):
 
         if not user:
             return {"message": "User with that username doesn't exist"}, 400
-        song = SongModel.find_by_name(data["songName"], user.id)
+
+        artist = ArtistModel.find_by_name(data["artist"], user.id)
+        song = SongModel.find_by_name(data["songName"], user.id, artist.id)
         if song:
             try:
-                artist = ArtistModel.find_by_name(data["artist"], user.id)
                 song.delete_from_db()
                 if len(artist.check_songs()) == 0:
                     artist.delete_from_db()
@@ -420,13 +422,15 @@ class SpotifyInfo(Resource):
             + "&type=track%2Cartist"
         )
 
-        response = requests.get(url, headers={"Authorization": "Bearer " + token})
+        response = requests.get(
+            url, headers={"Authorization": "Bearer " + token})
         if response.ok:
             track = response.json()["tracks"]["items"][0]["album"]
             artist_name = track["artists"][0]["name"]
             image_url = track["images"][1]["url"]
             track_id = response.json()["tracks"]["items"][0]["id"]
-            info_url = "https://api.spotify.com/v1/audio-analysis/{}".format(track_id)
+            info_url = "https://api.spotify.com/v1/audio-analysis/{}".format(
+                track_id)
             song_name = response.json()["tracks"]["items"][0]["name"]
         else:
             return None

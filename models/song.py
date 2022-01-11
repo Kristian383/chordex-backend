@@ -115,9 +115,10 @@ class SongModel(db.Model):
         }
 
     @classmethod
-    def find_by_name(cls, name, user_id):
+    def find_by_name(cls, name, user_id,artist_id):
         return (
             cls.query.filter_by(user_id=user_id)
+            .filter_by(artist_id=artist_id)
             .filter(func.lower(cls.name) == func.lower(name))
             .first()
         )
@@ -127,12 +128,7 @@ class SongModel(db.Model):
         # return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter_by(name=name).first()
         # song=cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter(func.lower(cls.name)==func.lower(name))#.first()
         # print(song)
-        return (
-            cls.query.filter_by(user_id=user_id)
-            .filter_by(artist_id=artist_id)
-            .filter(func.lower(cls.name) == func.lower(name))
-            .first()
-        )
+        return cls.query.filter_by(user_id=user_id).filter_by(artist_id=artist_id).filter(func.lower(cls.name) == func.lower(name)).first()
 
     @classmethod
     def find_by_id(cls, song_id, user_id):
