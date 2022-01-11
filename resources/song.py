@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-spotify_access = "BQAuiTFBpAgQo6EGRAIVzHHFRNodoL835TrvcIoEXY3Svj3PatJ6gUg3EtViRCF-BGB2JzWGe5ZPjQzk-ZU"
 spotify_access = ""
 
 
