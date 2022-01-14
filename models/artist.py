@@ -10,7 +10,7 @@ class ArtistModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     name = db.Column(db.String(50))
-    songs = db.relationship("SongModel", lazy="dynamic", cascade="all")
+    songs = db.relationship("SongModel", lazy="dynamic", cascade="all,delete")
     img_url = db.Column(db.String(80))
 
     def __init__(self, name, user_id):
@@ -39,7 +39,7 @@ class ArtistModel(db.Model):
     @classmethod
     def find_by_name(cls, name, user_id):
         # return cls.query.filter_by(user_id=user_id).filter_by(name=name).first()
-        return cls.query.filter_by(user_id=user_id).filter(func.lower(cls.name)==func.lower(name)).first()
+        return cls.query.filter_by(user_id=user_id).filter(func.lower(cls.name) == func.lower(name)).first()
 
     @classmethod
     def find_by_id(cls, artist_id, user_id):
@@ -49,12 +49,12 @@ class ArtistModel(db.Model):
     def find_all(cls):
         return cls.query.all()
 
-    
     def insertImgUrl(self, token):
         try:
             if token == None:
                 return
-            url = "https://api.spotify.com/v1/search?q=artist:"+self.name+"&type=artist&limit=1"
+            url = "https://api.spotify.com/v1/search?q=artist:" + \
+                self.name+"&type=artist&limit=1"
             response = requests.get(
                 url, headers={'Authorization': 'Bearer '+token})
         except:
@@ -62,7 +62,8 @@ class ArtistModel(db.Model):
             return "expired"
         if response.ok:
             try:
-                img = response.json()["artists"]["items"][0]["images"][1]["url"]
+                img = response.json()[
+                    "artists"]["items"][0]["images"][1]["url"]
                 self.img_url = img
                 self.save_to_db()
             except:

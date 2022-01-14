@@ -17,10 +17,8 @@ class UserModel(db.Model):
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(50))
 
-    songs = db.relationship("SongModel", lazy="dynamic")
-    websites = db.relationship("WebsiteModel", lazy="dynamic")
-
-    # number_of_songs = db.Column(db.Integer)
+    songs = db.relationship("SongModel", lazy="dynamic", cascade="all,delete")
+    websites = db.relationship("WebsiteModel", lazy="dynamic", cascade="all,delete")
 
     def json(self):
         return {"username": self.username,
@@ -28,9 +26,6 @@ class UserModel(db.Model):
                 "email": self.email,
                 "songs": [song.json() for song in self.songs.all()],
                 "websites": [website.json() for website in self.websites.all()]
-                # "numOfSongs": self.number_of_songs,
-                # "numOfMySongs": self.number_of_my_songs,
-                # "numOfArtists": self.number_of_artists,
                 }
 
     def __init__(self, username, password, email):

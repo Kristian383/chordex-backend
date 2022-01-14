@@ -6,7 +6,7 @@ from flask_cors import CORS
 from datetime import timedelta
 
 
-from resources.user import UserRegister,  UserLogin  # ,User, UserList,
+from resources.user import UserRegister,  UserLogin ,DeleteAccount # ,User, UserList
 from resources.artist import ArtistList, ArtistUserList
 from resources.song import Song, UsersSongList, MusicKeys, SpotifyInfo  # ,SongList
 from resources.website import Website, WebsiteList
@@ -42,6 +42,7 @@ jwt = JWTManager(app)
 # ROUTES
 api.add_resource(UserRegister, "/register")
 api.add_resource(UserLogin, '/login')
+api.add_resource(DeleteAccount, '/deleteacc')
 api.add_resource(ForgotPassword, '/forgotpassword')
 api.add_resource(PasswordReset, '/resetpassword/<string:token>')
 api.add_resource(ContactMe, '/contactme')

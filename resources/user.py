@@ -1,12 +1,13 @@
 
 from flask_restful import Resource, reqparse
 from models.user import UserModel
+from models.user_notes import UserNotesModel
 from werkzeug.security import check_password_hash
-from flask_jwt_extended import (
-    create_access_token,
-    jwt_required,
-    get_jwt_identity
-)
+from flask_jwt_extended import create_access_token  # (
+# create_access_token,
+# jwt_required,
+# get_jwt_identity
+# )
 
 
 class UserRegister(Resource):
@@ -73,9 +74,42 @@ class UserLogin(Resource):
 
         return {"message": "Invalid Credentials!"}, 401
 
+
 class UserList(Resource):
     def get(self):
         return {"users": [user.json() for user in UserModel.find_all()]}
+
+
+class DeleteAccount(Resource):
+    parser = reqparse.RequestParser()
+
+    parser.add_argument('password',
+                        type=str,
+                        required=True,
+                        help="This field cannot be left blank!"
+                        )
+
+    parser.add_argument('email',
+                        type=str,
+                        required=True,
+                        help="This field cannot be left blank!"
+                        )
+
+    def delete(self):
+        data = UserLogin.parser.parse_args()
+        user = UserModel.find_by_email(data['email'])
+
+        if user and check_password_hash(user.password, data['password']):
+            try:
+                UserNotesModel.find_by_userId(user.id).delete_from_db()
+                user.delete_from_db()
+                return {"message": "Your account has been deleted."
+                        }, 200
+            except:
+                return {"message": "Couldn't delete account."
+                        }, 500
+
+        return {"message": "Invalid Credentials!"}, 401
 
 
 class User(Resource):  # nece trebati za frontend
