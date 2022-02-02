@@ -3,14 +3,13 @@ from db import db
 # from models.artist import ArtistModel
 from sqlalchemy import func
 
-
 class SongModel(db.Model):
     __tablename__ = "song"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    # ovo artist prepoznaje jer je u artistModel to tablename?
+
     artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
 
     first_key = db.Column(db.String(20))
@@ -25,7 +24,7 @@ class SongModel(db.Model):
     is_my_song = db.Column(db.Boolean)
     bpm = db.Column(db.Integer)
     capo = db.Column(db.Integer)
-    # ovo su song notes pa povecati vjv
+    # song notes 
     song_text = db.Column(db.String(3500))
     yt_link = db.Column(db.String(150))
     chords_website_link = db.Column(db.String(150))
@@ -169,10 +168,3 @@ class SongModel(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    # @classmethod
-    # def find_all_user_songs_by_desc_order(cls, user_id):
-    #     return cls.query.filter_by(user_id=user_id).desc()
-
-    # @classmethod
-    # def find_all_user_songs_by_asc_order(cls, user_id):
-    #     return cls.query.filter_by(user_id=user_id).asc()

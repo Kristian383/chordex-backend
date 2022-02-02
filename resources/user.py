@@ -1,5 +1,6 @@
 
 from flask_restful import Resource, reqparse
+from models.artist import ArtistModel
 from models.user import UserModel
 from models.user_notes import UserNotesModel
 from werkzeug.security import check_password_hash
@@ -101,7 +102,8 @@ class DeleteAccount(Resource):
 
         if user and check_password_hash(user.password, data['password']):
             try:
-                UserNotesModel.find_by_userId(user.id).delete_from_db()
+                [artist.delete_from_db()
+                 for artist in ArtistModel.find_all_user_artists(user.id)]
                 user.delete_from_db()
                 return {"message": "Your account has been deleted."
                         }, 200
@@ -112,18 +114,18 @@ class DeleteAccount(Resource):
         return {"message": "Invalid Credentials!"}, 401
 
 
-class User(Resource):  # nece trebati za frontend
-    @classmethod
-    def get(cls, user_id):
-        user = UserModel.find_by_id(user_id)
-        if not user:
-            return {"message": "user not found"}, 404
-        return user.json()
+# class User(Resource):  # nece trebati za frontend
+#     @classmethod
+#     def get(cls, user_id):
+#         user = UserModel.find_by_id(user_id)
+#         if not user:
+#             return {"message": "user not found"}, 404
+#         return user.json()
 
-    @classmethod
-    def delete(cls, user_id):
-        user = UserModel.find_by_id(user_id)
-        if not user:
-            return {"message": "User not found"}, 404
-        user.delete_from_db()
-        return {"message": "User deleted"}, 200
+#     @classmethod
+#     def delete(cls, user_id):
+#         user = UserModel.find_by_id(user_id)
+#         if not user:
+#             return {"message": "User not found"}, 404
+#         user.delete_from_db()
+#         return {"message": "User deleted"}, 200

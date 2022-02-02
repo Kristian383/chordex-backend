@@ -10,7 +10,8 @@ class ArtistModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     name = db.Column(db.String(50))
-    songs = db.relationship("SongModel", lazy="dynamic", cascade="all,delete")
+    songs = db.relationship("SongModel", lazy="dynamic",cascade="all,delete")
+                 
     img_url = db.Column(db.String(80))
 
     def __init__(self, name, user_id):

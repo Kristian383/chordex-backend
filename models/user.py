@@ -17,8 +17,9 @@ class UserModel(db.Model):
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(50))
 
-    songs = db.relationship("SongModel", lazy="dynamic", cascade="all,delete")
-    websites = db.relationship("WebsiteModel", lazy="dynamic", cascade="all,delete")
+    songs = db.relationship("SongModel", lazy="dynamic", cascade="all,delete",backref="parent")
+    websites = db.relationship("WebsiteModel", lazy="dynamic", cascade="all,delete",backref="parent")
+    notes=db.relationship("UserNotesModel", lazy="dynamic", cascade="all,delete",backref="parent")
 
     def json(self):
         return {"username": self.username,
