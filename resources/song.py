@@ -369,32 +369,26 @@ class Song(Resource):
             return {"message": "Song doesnt exist"}, 400
 
 
-# admin routes
+class UsersSongList(Resource):
+    @jwt_required()
+    def get(self, username):
+        user = UserModel.find_by_username(username)
+        if not user:
+            return {"message": "User with that username doesn't exist"}, 400
+        songs = [
+            song.json() for song in SongModel.find_all_user_songs(user.id)
+        ] 
 
+        for song in songs:
+            artist = ArtistModel.find_by_id(song["artistId"], song["userId"])
+            song["artist"] = artist.name
+        return {"songs": songs}
+
+# admin routes
 
 class SongList(Resource):
     def get(self):
         return {"songs": [song.json() for song in SongModel.find_all()]}
-
-
-class UsersSongList(Resource):
-    # @jwt_required()
-    def get(self, username):
-        # numOfLoads = int(request.args["numOfLoads"])
-        user = UserModel.find_by_username(username)
-        if not user:
-            return {"message": "User with that username doesn't exist"}, 400
-        # return {"numOfLoads":queryStringRaw}
-        songs = [
-            song.json() for song in SongModel.find_all_user_songs(user.id)
-        ]  # ,numOfLoads
-
-        # artists=[]
-        for song in songs:
-            artist = ArtistModel.find_by_id(song["artistId"], song["userId"])
-            song["artist"] = artist.name
-            # artists.append(artist.json())
-        return {"songs": songs}
 
 
 class SpotifyInfo(Resource):
