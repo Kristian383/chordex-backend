@@ -1,14 +1,16 @@
 
+from base64 import decode
 from flask_restful import Resource, reqparse
 from models.artist import ArtistModel
 from models.user import UserModel
-from models.user_notes import UserNotesModel
+# from models.user_notes import UserNotesModel
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import create_access_token  # (
 # create_access_token,
 # jwt_required,
 # get_jwt_identity
 # )
+from firebase_admin import auth
 
 
 class UserRegister(Resource):
@@ -112,6 +114,33 @@ class DeleteAccount(Resource):
                         }, 500
 
         return {"message": "Invalid Credentials!"}, 401
+
+
+class FirebaseAuth(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('google_token',
+                        type=str,
+                        required=True,
+                        help="This field cannot be left blank!"
+                        )
+
+    def post(self):
+        data = FirebaseAuth.parser.parse_args()
+        google_token = data['google_token']
+        try:
+            decoded_token = auth.verify_id_token(google_token)
+            email = decoded_token["email"]
+            user = UserModel.find_by_email(email)
+            if not user:
+                return {"message": "User doesnt exist!"}, 404
+            access_token = create_access_token(
+                identity=user.id)
+            return {
+                "token": access_token,
+                "email": user.email,
+                "user": user.username}
+        except:
+            return {"message": "Invalid Credentials!"}, 401
 
 
 # class User(Resource):  # nece trebati za frontend

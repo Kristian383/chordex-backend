@@ -6,7 +6,8 @@ from flask_cors import CORS
 from datetime import timedelta
 
 
-from resources.user import UserRegister,  UserLogin ,DeleteAccount # ,User, UserList
+# ,User, UserList
+from resources.user import UserRegister,  UserLogin, DeleteAccount, FirebaseAuth
 from resources.artist import ArtistList, ArtistUserList
 from resources.song import Song, UsersSongList, MusicKeys, SpotifyInfo  # ,SongList
 from resources.website import Website, WebsiteList
@@ -16,6 +17,10 @@ from resources.mails import ForgotPassword, ContactMe, PasswordReset
 from db import db
 import os
 from dotenv import load_dotenv
+
+import firebase_admin
+from firebase_admin import credentials
+
 
 load_dotenv()
 
@@ -31,6 +36,11 @@ api = Api(app)
 
 CORS(app)
 
+# firebase auth
+cred = credentials.Certificate("./service-account-file.json")
+
+default_app = firebase_admin.initialize_app(cred)
+
 
 @app.before_first_request
 def create_tables():
@@ -42,6 +52,7 @@ jwt = JWTManager(app)
 # ROUTES
 api.add_resource(UserRegister, "/register")
 api.add_resource(UserLogin, '/login')
+api.add_resource(FirebaseAuth, '/firebase')
 api.add_resource(DeleteAccount, '/deleteacc')
 api.add_resource(ForgotPassword, '/forgotpassword')
 api.add_resource(PasswordReset, '/resetpassword/<string:token>')
@@ -58,7 +69,7 @@ api.add_resource(MusicKeys, "/keys")
 api.add_resource(UsersSongList, "/songs/<string:username>")
 api.add_resource(Song, "/song/<string:username>")
 
-# oinserting and deleting websites
+# on iserting and deleting websites
 api.add_resource(Website, "/website/<string:username>")
 
 # get all users websites
@@ -76,37 +87,3 @@ api.add_resource(UserNotes, "/notes/<string:username>")
 if __name__ == "__main__":
     db.init_app(app)
     app.run(debug=True, port=5000)
-
-# @jwt.token_in_blocklist_loader
-# def check_if_token_in_blacklist(jwt_header, jwt_payload):
-#     jti = jwt_payload["jti"]
-
-#     return jti in BLOCKLIST
-
-# @jwt.expired_token_loader
-# def expired_token_callback():
-#     return jsonify({
-#         'message': 'The token has expired.',
-#         'error': 'token_expired'
-#     }), 401
-
-# @jwt.invalid_token_loader
-# def invalid_token_callback(error):
-#     return jsonify({
-#         'message': 'Signature verification failed.',
-#         'error': 'invalid_token'
-#     }), 401
-
-# @jwt.unauthorized_loader
-# def missing_token_callback(error):
-#     return jsonify({
-#         "description": "Request does not contain an access token.",
-#         'error': 'authorization_required'
-#     }), 401
-
-# @jwt.revoked_token_loader
-# def revoked_token_callback():
-#     return jsonify({
-#         "description": "The token has been revoked.",
-#         'error': 'token_revoked'
-#     }), 401
