@@ -7,12 +7,12 @@ from datetime import timedelta
 
 
 # ,User, UserList
-from resources.user import UserRegister,  UserLogin, DeleteAccount, FirebaseAuth
+from resources.user import UserRegister,  UserLogin, FirebaseAuth, PasswordReset, DeleteAccount
 from resources.artist import ArtistList, ArtistUserList
 from resources.song import Song, UsersSongList, MusicKeys, SpotifyInfo  # ,SongList
 from resources.website import Website, WebsiteList
 from resources.user_notes import UserNotes
-from resources.mails import ForgotPassword, ContactMe, PasswordReset
+from resources.mails import ForgotPassword, ContactMe, DeleteAccountRequest
 
 from db import db
 import os
@@ -53,7 +53,9 @@ jwt = JWTManager(app)
 api.add_resource(UserRegister, "/register")
 api.add_resource(UserLogin, '/login')
 api.add_resource(FirebaseAuth, '/firebase')
-api.add_resource(DeleteAccount, '/deleteacc')
+api.add_resource(DeleteAccountRequest, '/delete-acc-request')
+api.add_resource(DeleteAccount, '/delete-acc/<string:token>')
+
 api.add_resource(ForgotPassword, '/forgotpassword')
 api.add_resource(PasswordReset, '/resetpassword/<string:token>')
 api.add_resource(ContactMe, '/contactme')
@@ -86,4 +88,4 @@ api.add_resource(UserNotes, "/notes/<string:username>")
 
 if __name__ == "__main__":
     db.init_app(app)
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5000, host="0.0.0.0")

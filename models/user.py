@@ -17,9 +17,12 @@ class UserModel(db.Model):
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(50))
 
-    songs = db.relationship("SongModel", lazy="dynamic", cascade="all,delete",backref="parent")
-    websites = db.relationship("WebsiteModel", lazy="dynamic", cascade="all,delete",backref="parent")
-    notes=db.relationship("UserNotesModel", lazy="dynamic", cascade="all,delete",backref="parent")
+    songs = db.relationship("SongModel", lazy="dynamic",
+                            cascade="all,delete", backref="parent")
+    websites = db.relationship(
+        "WebsiteModel", lazy="dynamic", cascade="all,delete", backref="parent")
+    notes = db.relationship("UserNotesModel", lazy="dynamic",
+                            cascade="all,delete", backref="parent")
 
     def json(self):
         return {"username": self.username,
@@ -59,7 +62,7 @@ class UserModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def get_reset_pass_token(cls, user_id, expires_sec=1800):
+    def generate_authenticity_token(cls, user_id, expires_sec=1800):
         secret = os.environ.get("SECRET_KEY")
         pass_hash = cls.find_by_id(user_id).password
         s = Serializer(secret+pass_hash, expires_sec)
@@ -67,7 +70,7 @@ class UserModel(db.Model):
         return token
 
     @classmethod
-    def verify_reset_pass_token(cls, token, email):
+    def verify_authenticity_token(cls, token, email):
         user = cls.find_by_email(email)
         if not user:
             return None
@@ -84,8 +87,28 @@ class UserModel(db.Model):
         return len(self.songs.all())
 
     def userHasBenefits(self):
-        if self.id in [1,2]:
+        if self.id in [1, 2]:
             return True
         return False
-        
+    
+    # @classmethod
+    # def get_delete_acc_token(cls, user_id, expires_sec=1800):
+    #     secret = os.environ.get("SECRET_KEY")
+    #     pass_hash = cls.find_by_id(user_id).password
+    #     s = Serializer(secret+pass_hash, expires_sec)
+    #     token = s.dumps({"user_id": user_id}).decode("utf-8")
+    #     return token
 
+    # @classmethod
+    # def verify_delete_acc_token(cls, token, email):
+    #     user = cls.find_by_email(email)
+    #     if not user:
+    #         return None
+    #     secret = os.environ.get("SECRET_KEY")+user.password
+    #     s = Serializer(secret)
+    #     try:
+    #         user_id = s.loads(token)["user_id"]
+    #     except:
+    #         return None
+
+    #     return cls.find_by_id(user_id)
