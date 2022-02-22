@@ -36,7 +36,7 @@ class ContactMe(Resource):
         msg["Subject"] = "Chordex - Contact me"
         msg["From"] = EMAIL_ADRESS
         msg["To"] = EMAIL_ADRESS
-        content="From: "+email+"\n\n"+message
+        content = "From: "+email+"\n\n"+message
         msg.set_content(content)
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
             try:
@@ -65,9 +65,10 @@ class ForgotPassword(Resource):
         msg = EmailMessage()
         msg["Subject"] = "Chordex - Password reset"
         msg["From"] = EMAIL_ADRESS
-        msg["To"] = user.email  
-        token=user.generate_authenticity_token(user.id) 
-        reset_link ="https://chordex.net/resetpswd?token={0}&email={1}".format(token,user.email)
+        msg["To"] = user.email
+        token = user.generate_authenticity_token(user.id)
+        reset_link = "https://chordex.net/resetpswd?token={0}&email={1}".format(
+            token, user.email)
         # reset_link ="http://localhost:8080/resetpswd?token={}".format(token)
         msg_content = "Someone requested that the password be reset for the following account:\n\nhttps://chordex.net\n\nEmail: {0}\n\nIf this was a mistake, just ignore this email and nothing will happen.\n\nTo reset your password, visit the following address:\n\nLink is valid for 30 minutes.\n\n {1}".format(
             user.email, reset_link)
@@ -89,6 +90,7 @@ class DeleteAccountRequest(Resource):
                         required=True,
                         help="This field cannot be left blank!"
                         )
+
     @jwt_required()
     def post(self):
         data = DeleteAccountRequest.parser.parse_args()
@@ -100,14 +102,12 @@ class DeleteAccountRequest(Resource):
         msg = EmailMessage()
         msg["Subject"] = "Chordex - Deleting account"
         msg["From"] = EMAIL_ADRESS
-        msg["To"] = user.email  
-        token=user.generate_authenticity_token(user.id)  
-        # delete_acc_link ="https://chordex.net/delete-acc?token={0}&email={1}".format(token,user.email)
-        delete_acc_link ="http://localhost:8080/delete-acc?token={0}&email={1}".format(token,user.email)
-        # delete_acc_link ="http://localhost:8080/resetpswd?token={}".format(token)
-        # msg_content = "Someone requested that the account be deleted for the following account:\n\nhttps://chordex.net\n\nEmail: {0}\n\nIf this was a mistake, just ignore this email and nothing will happen.\n\nTo delete your account, visit the following address:\n\nLink is valid for 30 minutes.\n\n {1}".format(
-        #     user.email, delete_acc_link)
-        msg_content = "Someone requested that the account be deleted for the following account:\n\nhttps://localhost:8080\n\nEmail: {0}\n\nIf this was a mistake, just ignore this email and nothing will happen.\n\nTo delete your account, visit the following address:\n\nLink is valid for 30 minutes.\n\n {1}".format(
+        msg["To"] = user.email
+        token = user.generate_authenticity_token(user.id)
+        delete_acc_link = "https://chordex.net/delete-acc?token={0}&email={1}".format(
+            token, user.email)
+        # delete_acc_link ="http://localhost:8080/delete-acc?token={0}&email={1}".format(token,user.email)
+        msg_content = "Someone requested that the account be deleted for the following account:\n\nhttps://chordex.net\n\nEmail: {0}\n\nIf this was a mistake, just ignore this email and nothing will happen.\n\nTo delete your account, visit the following address:\n\nLink is valid for 30 minutes.\n\n {1}".format(
             user.email, delete_acc_link)
 
         msg.set_content(msg_content)

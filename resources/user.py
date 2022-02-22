@@ -110,20 +110,6 @@ class DeleteAccount(Resource):
         except:
             return {"message": "Couldn't delete account."}, 500
 
-        # return {"message": "User deleted."}
-        # if (user and check_password_hash(user.password, data['password'])):
-        #     try:
-        #         [artist.delete_from_db()
-        #          for artist in ArtistModel.find_all_user_artists(user.id)]
-        #         user.delete_from_db()
-        #         return {"message": "Your account has been deleted."
-        #                 }, 200
-        #     except:
-        #         return {"message": "Couldn't delete account."
-        #                 }, 500
-
-        # return {"message": "Invalid Credentials!"}, 401
-
 
 class PasswordReset(Resource):
     parser = reqparse.RequestParser()
