@@ -22,12 +22,11 @@ class UserNotes(Resource):
                         help="This field cannot be left blank!"
                         )
 
-    def get(self, username):
-        # ovdje slati username name?
-        user = UserModel.find_by_username(username)
+    def get(self, email):
+        user = UserModel.find_by_email(email)
 
         if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+            return {"message": "User with that email doesn't exist"}, 400
 
         user_notes = UserNotesModel.find_by_userId(user.id)
 
@@ -57,12 +56,12 @@ class UserNotes(Resource):
     #         return {"message": "An error occured inserting a notes."}, 500
     #     return {"message": "Note created."}, 201
 
-    def put(self, username):
+    def put(self, email):
         data = UserNotes.parser.parse_args()
-        user = UserModel.find_by_username(username)
+        user = UserModel.find_by_email(email)
 
         if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+            return {"message": "User with that email doesn't exist"}, 400
 
         user_notes = UserNotesModel.find_by_userId(user.id)
 
@@ -80,11 +79,11 @@ class UserNotes(Resource):
         return user_notes.json(), 201
 
     # ovo zapravo necemo moci deletati, jedino kad se user makne
-    def delete(self, username):
-        user = UserModel.find_by_username(username)
+    def delete(self, email):
+        user = UserModel.find_by_email(email)
 
         if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+            return {"message": "User with that email doesn't exist"}, 400
 
         note = UserNotesModel.find_by_userId(user.id)
         try:

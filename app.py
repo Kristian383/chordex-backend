@@ -77,7 +77,7 @@ api.add_resource(Website, "/website/<string:username>")
 # get all users websites
 api.add_resource(WebsiteList, "/websites/<string:username>")
 
-api.add_resource(UserNotes, "/notes/<string:username>")
+api.add_resource(UserNotes, "/notes/<string:email>")
 
 # admin routes
 # api.add_resource(User, "/user/<string:username>")
