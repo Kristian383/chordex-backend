@@ -72,10 +72,10 @@ api.add_resource(UsersSongList, "/songs/<string:email>")
 api.add_resource(Song, "/song/<string:email>")
 
 # on iserting and deleting websites
-api.add_resource(Website, "/website/<string:username>")
+api.add_resource(Website, "/website/<string:email>")
 
 # get all users websites
-api.add_resource(WebsiteList, "/websites/<string:username>")
+api.add_resource(WebsiteList, "/websites/<string:email>")
 
 api.add_resource(UserNotes, "/notes/<string:email>")
 
