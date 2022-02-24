@@ -125,9 +125,9 @@ class Song(Resource):
     parser.add_argument(
         "artist", type=str, required=True, help="This field cannot be left blank!"
     )
-    parser.add_argument(
-        "username", type=str, required=True, help="This field cannot be left blank!"
-    )
+    # parser.add_argument(
+    #     "user_email", type=str, required=True, help="This field cannot be left blank!"
+    # )
     parser.add_argument(
         "firstKey", type=str, required=False, help="This field cannot be left blank!"
     )
@@ -210,28 +210,28 @@ class Song(Resource):
         "imgUrl", type=str, required=False, help="This field cannot be left blank!"
     )
 
-    def get(self, name, username):
-        user = UserModel.find_by_username(username)
+    # def get(self, name, email):
+    #     user = UserModel.find_by_email(email)
 
-        if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+    #     if not user:
+    #         return {"message": "User with that email doesn't exist"}, 400
 
-        user_id = UserModel.find_by_username(username).json()["id"]
+    #     # user_id = UserModel.find_by_username(username).json()["id"]
 
-        song = SongModel.find_by_name(name, user_id)
+    #     song = SongModel.find_by_name(name, user.id)
 
-        if song:
-            return song.json()
-        return name
+    #     if song:
+    #         return song.json()
+    #     return name
 
     # @jwt_required()
 
-    def post(self, username):
+    def post(self, email):
         data = Song.parser.parse_args()
-        user = UserModel.find_by_username(username)
+        user = UserModel.find_by_email(email)
 
         if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+            return {"message": "User with that email doesn't exist"}, 400
 
         if user.userHasBenefits() == False and user.count_all_user_songs() >= 30:
             return {"message": "Limit of songs exceeded"}, 400
@@ -306,12 +306,12 @@ class Song(Resource):
         resp = artist.json()
         return {"song": song.json(), "artist": resp}, 201
 
-    def put(self, username):
+    def put(self, email):
         data = Song.parser.parse_args()
-        user = UserModel.find_by_username(username)
+        user = UserModel.find_by_email(email)
 
         if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+            return {"message": "User with that email doesn't exist"}, 400
         song = SongModel.find_by_id(data["songId"], user.id)
 
         if song is None:
@@ -344,14 +344,14 @@ class Song(Resource):
             # artist.save_to_db()
             return {"message": "Song updated", "song": song.json()}, 200
         except:
-            return {"message": "An error occured deleting the song."}, 500
+            return {"message": "An error occured updating the song."}, 500
 
-    def delete(self, username):
+    def delete(self, email):
         data = Song.parser.parse_args()
-        user = UserModel.find_by_username(username)
+        user = UserModel.find_by_email(email)
 
         if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+            return {"message": "User with that email doesn't exist"}, 400
 
         artist = ArtistModel.find_by_name(data["artist"], user.id)
         song = SongModel.find_by_name(data["songName"], user.id, artist.id)

@@ -69,7 +69,7 @@ api.add_resource(ArtistList, "/artists/<string:email>")
 
 api.add_resource(MusicKeys, "/keys")
 api.add_resource(UsersSongList, "/songs/<string:email>")
-api.add_resource(Song, "/song/<string:username>")
+api.add_resource(Song, "/song/<string:email>")
 
 # on iserting and deleting websites
 api.add_resource(Website, "/website/<string:username>")
