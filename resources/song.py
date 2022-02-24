@@ -371,10 +371,10 @@ class Song(Resource):
 
 class UsersSongList(Resource):
     @jwt_required()
-    def get(self, username):
-        user = UserModel.find_by_username(username)
+    def get(self, email):
+        user = UserModel.find_by_email(email)
         if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+            return {"message": "User with that email doesn't exist"}, 400
         songs = [
             song.json() for song in SongModel.find_all_user_songs(user.id)
         ] 
