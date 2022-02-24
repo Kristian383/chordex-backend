@@ -169,7 +169,7 @@ class FirebaseAuth(Resource):
                 "email": user.email,
                 "user": user.username}
         except:
-            return {"message": "Something went wrong."}, 500
+            return {"message": "Something went wrong on our side. Try again or contact us."}, 500
 
 
 # class User(Resource):  # nece trebati za frontend
