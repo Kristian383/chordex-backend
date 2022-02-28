@@ -8,7 +8,7 @@ from datetime import timedelta
 
 # ,User, UserList
 from resources.user import UserRegister,  UserLogin, FirebaseAuth, PasswordReset, DeleteAccount
-from resources.artist import ArtistList, ArtistUserList
+from resources.artist import ArtistList #, ArtistUserList
 from resources.song import Song, UsersSongList, MusicKeys, SpotifyInfo  # ,SongList
 from resources.website import Website, WebsiteList
 from resources.user_notes import UserNotes
@@ -62,22 +62,22 @@ api.add_resource(ContactMe, '/contactme')
 
 api.add_resource(SpotifyInfo, '/spotifyacess')
 # get all user artists with artist info
-api.add_resource(ArtistList, "/artists/<string:username>")
+api.add_resource(ArtistList, "/artists/<string:email>")
 
 # all songs by artist from certain user   (za odredenog usera)
-api.add_resource(ArtistUserList, "/artist/<string:username>")
+# api.add_resource(ArtistUserList, "/artist/<string:email>")
 
 api.add_resource(MusicKeys, "/keys")
 api.add_resource(UsersSongList, "/songs/<string:email>")
-api.add_resource(Song, "/song/<string:username>")
+api.add_resource(Song, "/song/<string:email>")
 
 # on iserting and deleting websites
-api.add_resource(Website, "/website/<string:username>")
+api.add_resource(Website, "/website/<string:email>")
 
 # get all users websites
-api.add_resource(WebsiteList, "/websites/<string:username>")
+api.add_resource(WebsiteList, "/websites/<string:email>")
 
-api.add_resource(UserNotes, "/notes/<string:username>")
+api.add_resource(UserNotes, "/notes/<string:email>")
 
 # admin routes
 # api.add_resource(User, "/user/<string:username>")

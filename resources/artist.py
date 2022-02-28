@@ -57,10 +57,10 @@ class Artist(Resource):
 
 
 class ArtistList(Resource):  # get all users artists with their info
-    def get(self, username):
-        user = UserModel.find_by_username(username)
+    def get(self, email):
+        user = UserModel.find_by_email(email)
         if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+            return {"message": "User with that email doesn't exist"}, 400
 
         artists = [artist.getArtistInfo()
                    for artist in ArtistModel.find_all_user_artists(user.id)]
@@ -72,31 +72,30 @@ class ArtistList(Resource):  # get all users artists with their info
         return {"artists": artists}
 
 
-class ArtistUserList(Resource):  # ovo vraca pjesme jednog artista
-    parser = reqparse.RequestParser()
-    parser.add_argument('username',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
-    parser.add_argument('artist',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
-    # @jwt_required()
+# class ArtistUserList(Resource):  # ovo vraca pjesme jednog artista
+#     parser = reqparse.RequestParser()
+#     parser.add_argument('email',
+#                         type=str,
+#                         required=True,
+#                         help="This field cannot be left blank!"
+#                         )
+#     parser.add_argument('artist',
+#                         type=str,
+#                         required=True,
+#                         help="This field cannot be left blank!"
+#                         )
+#     # @jwt_required()
+#     def get(self, email):
+#         data = ArtistUserList.parser.parse_args()
+#         user = UserModel.find_by_email(email)
+#         if not user:
+#             return {"message": "User with that email doesn't exist"}, 400
 
-    def get(self, username):
-        data = ArtistUserList.parser.parse_args()
-        user = UserModel.find_by_username(username)
-        if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+#         artist = ArtistModel.find_by_name(data["artist"], user.id)
 
-        artist = ArtistModel.find_by_name(data["artist"], user.id)
+#         if artist is None:
+#             return {'message': "An artist with name '{}' doesn't exist.".format(data["artist"])}, 400
 
-        if artist is None:
-            return {'message': "An artist with name '{}' doesn't exist.".format(data["artist"])}, 400
-
-        return {"songs": [song.json() for song in SongModel.find_all_user_songs_by_artist(user.id, artist.id)],
-                "artist": artist.name
-                }  # vraca all songs by artist
+#         return {"songs": [song.json() for song in SongModel.find_all_user_songs_by_artist(user.id, artist.id)],
+#                 "artist": artist.name
+#                 }  # vraca all songs by artist

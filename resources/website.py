@@ -17,12 +17,12 @@ class Website(Resource):
                         help="This field cannot be left blank!"
                         )
 
-    def post(self, username):
+    def post(self, email):
         data = Website.parser.parse_args()
-        user = UserModel.find_by_username(username)
+        user = UserModel.find_by_email(email)
 
         if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+            return {"message": "User with that email doesn't exist"}, 400
 
         if WebsiteModel.find_by_name(data["name"], user.id):
             return {'message': "An website with name '{}' already exists.".format(data["name"])}, 400
@@ -34,12 +34,12 @@ class Website(Resource):
             return {"message": "An error occured inserting the website."}, 500
         return {'message': 'Website inserted'}, 201
 
-    def delete(self, username):
+    def delete(self, email):
         data = Website.parser.parse_args()
-        user = UserModel.find_by_username(username)
+        user = UserModel.find_by_email(email)
 
         if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+            return {"message": "User with that email doesn't exist"}, 400
 
         website = WebsiteModel.find_by_name(data["name"], user.id)
 
@@ -55,9 +55,9 @@ class Website(Resource):
 
 class WebsiteList(Resource):
 
-    def get(self, username):
-        user = UserModel.find_by_username(username)
+    def get(self, email):
+        user = UserModel.find_by_email(email)
         if not user:
-            return {"message": "User with that username doesn't exist"}, 400
+            return {"message": "User with that email doesn't exist"}, 400
 
         return {"websites": [website.json() for website in WebsiteModel.find_all_users_websites(user.id)]}
