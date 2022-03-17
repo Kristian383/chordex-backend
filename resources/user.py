@@ -37,7 +37,8 @@ class UserRegister(Resource):
     def post(self):
         data = UserRegister.parser.parse_args()
 
-        if UserModel.find_by_username(data["username"]) or UserModel.find_by_email(data["email"]):
+        # UserModel.find_by_username(data["username"]) or
+        if UserModel.find_by_email(data["email"]):
             return {"message": "User with that username or email already exists"}, 400
 
         user = UserModel(data["username"], data["password"], data["email"])
@@ -161,14 +162,14 @@ class FirebaseAuth(Resource):
                 user = UserModel(username, os.environ.get(
                     "GOOGLE_USER_PASSWORD"), email)
                 user.save_to_db()
-
             access_token = create_access_token(
                 identity=user.id)
             return {
                 "token": access_token,
                 "email": user.email,
                 "user": user.username}
-        except:
+        except:  # Exception as e
+            # print(e)
             return {"message": "Something went wrong on our side. Try again or contact us."}, 500
 
 
