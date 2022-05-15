@@ -4,3 +4,7 @@ As a guitarist in my free time, i've come with an idea of making an web app name
 
 This repository shows backend code
 Frontend is visible here: https://github.com/Kristian383/chordex-master
+
+
+© Kristian Nenadovic 2022
+
