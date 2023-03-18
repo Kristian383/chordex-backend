@@ -8,7 +8,6 @@ from flask_jwt_extended import jwt_required
 
 # from flask import request
 import requests
-import json
 import os
 from dotenv import load_dotenv
 
