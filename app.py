@@ -11,7 +11,7 @@ from resources.song import Song, UsersSongList, MusicKeys, SpotifyInfo
 from resources.website import Website, WebsiteList
 from resources.user_notes import UserNotes
 from resources.mails import ForgotPassword, ContactMe, DeleteAccountRequest
-from resources.playlist import Playlists, PlaylistSongs
+from resources.playlist import Playlists, PlaylistSongs, SongInPlaylists
 
 from db import db
 import os
@@ -69,8 +69,9 @@ api.add_resource(ArtistList, "/artists/<string:email>")
 api.add_resource(MusicKeys, "/keys")
 api.add_resource(UsersSongList, "/songs/<string:email>")
 api.add_resource(Song, "/song/<string:email>")
-api.add_resource(Playlists, "/playlists")
-api.add_resource(PlaylistSongs, "/playlist")
+api.add_resource(Playlists, "/playlists/<string:email>")
+api.add_resource(PlaylistSongs, "/playlist/<string:email>")
+api.add_resource(SongInPlaylists, "/song-in-playlists/<string:email>/<int:songId>")
 
 # on iserting and deleting websites
 api.add_resource(Website, "/website/<string:email>")

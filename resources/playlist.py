@@ -15,23 +15,23 @@ class Playlists(Resource):
                         required=False,
                         help="This field cannot be left blank!"
                         )
-    parser.add_argument('email',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
-    def get(self):
-        data = Playlists.parser.parse_args();
-        user = UserModel.find_by_email(data["email"])
+    # parser.add_argument('email',
+    #                     type=str,
+    #                     required=True,
+    #                     help="This field cannot be left blank!"
+    #                     )
+    def get(self, email):
+        # data = Playlists.parser.parse_args();
+        user = UserModel.find_by_email(email)
         if not user:
             return {"message": "User not found"}, 404
         
         playlists = [playlist.name for playlist in PlaylistModel.find_all_user_playlists(user.id)]
         return { "playlists": playlists }
     
-    def post(self):
+    def post(self, email):
         data = Playlists.parser.parse_args()
-        user = UserModel.find_by_email(data["email"])
+        user = UserModel.find_by_email(email)
         if not user:
             return {"message": "User not found"}, 400
         name = data['playlist_name']
@@ -46,9 +46,9 @@ class Playlists(Resource):
             return {"message": "An error occured inserting a playlist."}, 500
         return {'message': f'Playlist {playlist.name} created successfully'}, 201
     
-    def delete(self):
+    def delete(self, email):
         data = Playlists.parser.parse_args()
-        user = UserModel.find_by_email(data["email"])
+        user = UserModel.find_by_email(email)
         name = data['playlist_name']
         if not user:
             return {"message": "User not found"}, 400
@@ -62,9 +62,9 @@ class Playlists(Resource):
                 return {"message": "An error occured deleting a playlist."}, 500
         return {'message': f'Playlist {existing_playlist.name} deleted successfully'}, 201
 
-    def put(self):
+    def put(self, email):
         data = Playlists.parser.parse_args()
-        user = UserModel.find_by_email(data["email"])
+        user = UserModel.find_by_email(email)
         if not user:
             return {"message": "User not found"}, 400
 
@@ -94,15 +94,18 @@ class PlaylistSongs(Resource):
                         required=True,
                         help="This field cannot be left blank!"
                         )
-    parser.add_argument('email',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
+    # parser.add_argument('email',
+    #                     type=str,
+    #                     required=True,
+    #                     help="This field cannot be left blank!"
+    #                     )
+
+    # pošaljem songId i da mi sve playliste u kojima se ona nalazi
+    # pošaljem playlistu i nadje mi sve njezine pjesme
     
-    def get(self):
+    def get(self, email):
         data = PlaylistSongs.parser.parse_args();
-        user = UserModel.find_by_email(data["email"])
+        user = UserModel.find_by_email(email)
         if not user:
             return {"message": "User not found"}, 404
         playlist = PlaylistModel.find_by_name(user.id, data["playlist_name"])
@@ -110,9 +113,9 @@ class PlaylistSongs(Resource):
             return {"songs": [song.id for song in playlist.songs.all()]}
         return {"message": "Playlist not found"}, 404
 
-    def post(self):
+    def post(self, email):
         data = PlaylistSongs.parser.parse_args();
-        user = UserModel.find_by_email(data["email"])
+        user = UserModel.find_by_email(email)
         if not user:
             return {'message': 'User not found'}, 404
 
@@ -133,9 +136,9 @@ class PlaylistSongs(Resource):
             return {"message": "An error occured upon adding a song into the playlist."}, 500
         return {'message': 'Song added to the playlist successfully.'}, 201
     
-    def delete(self):
+    def delete(self, email):
         data = PlaylistSongs.parser.parse_args()
-        user = UserModel.find_by_email(data["email"])
+        user = UserModel.find_by_email(email)
         if not user:
             return {"message": "User not found"}, 404
         playlist = PlaylistModel.find_by_name(user.id, data["playlist_name"])
@@ -151,3 +154,13 @@ class PlaylistSongs(Resource):
         except:
             return {"message": "An error occured deleting a song from playlist."}, 500
         return {'message': f'Song deleted successfully from {playlist.name} playlist'}
+    
+class SongInPlaylists(Resource):
+    def get(self, email, songId):
+        user = UserModel.find_by_email(email)
+        if not user:
+            return {"message": "User not found"}, 404
+        
+        playlists = PlaylistModel.find_all_playlists_of_a_song(user.id, songId)
+        filtered_playlists = [playlist.name for playlist in playlists]
+        return {"playlists": filtered_playlists}

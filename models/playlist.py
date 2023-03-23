@@ -33,9 +33,13 @@ class PlaylistModel(db.Model):
         db.session.commit()
 
     @classmethod
-    def find_all_user_playlists(cls, user_id):
-        return cls.query.filter_by(user_id=user_id)
+    def find_all_user_playlists(cls, _user_id):
+        return cls.query.filter_by(user_id=_user_id).all()
     
     @classmethod
-    def find_by_name(cls, user_id, name):
-        return cls.query.filter_by(user_id=user_id).filter_by(name = name).first()
+    def find_all_playlists_of_a_song(cls, _user_id, _songId):
+        return cls.query.filter_by(user_id=_user_id).filter(cls.songs.any(id=_songId)).all()
+    
+    @classmethod
+    def find_by_name(cls, _user_id, _name):
+        return cls.query.filter_by(user_id=_user_id).filter_by(name = _name).first()
