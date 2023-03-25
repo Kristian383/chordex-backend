@@ -71,7 +71,7 @@ api.add_resource(UsersSongList, "/songs/<string:email>")
 api.add_resource(Song, "/song/<string:email>")
 api.add_resource(Playlists, "/playlists/<string:email>")
 api.add_resource(PlaylistSongs, "/playlist/<string:email>")
-api.add_resource(SongInPlaylists, "/song-in-playlists/<string:email>/<int:songId>")
+api.add_resource(SongInPlaylists, "/song-playlists/<string:email>/<int:songId>")
 
 # on iserting and deleting websites
 api.add_resource(Website, "/website/<string:email>")

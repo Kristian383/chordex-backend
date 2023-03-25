@@ -134,7 +134,7 @@ class PlaylistSongs(Resource):
             playlist.save_to_db()
         except:
             return {"message": "An error occured upon adding a song into the playlist."}, 500
-        return {'message': 'Song added to the playlist successfully.'}, 201
+        return {'message': f'{song.name} added to the playlist "{playlist.name}" successfully.'}, 201
     
     def delete(self, email):
         data = PlaylistSongs.parser.parse_args()
