@@ -70,7 +70,7 @@ api.add_resource(MusicKeys, "/keys")
 api.add_resource(UsersSongList, "/songs/<string:email>")
 api.add_resource(Song, "/song/<string:email>")
 api.add_resource(Playlists, "/playlists/<string:email>")
-api.add_resource(PlaylistSongs, "/playlist/<string:email>")
+api.add_resource(PlaylistSongs, "/playlist/<string:email>/<string:playlistName>")
 api.add_resource(SongInPlaylists, "/song-playlists/<string:email>/<int:songId>")
 
 # on iserting and deleting websites

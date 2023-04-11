@@ -15,13 +15,7 @@ class Playlists(Resource):
                         required=False,
                         help="This field cannot be left blank!"
                         )
-    # parser.add_argument('email',
-    #                     type=str,
-    #                     required=True,
-    #                     help="This field cannot be left blank!"
-    #                     )
     def get(self, email):
-        # data = Playlists.parser.parse_args();
         user = UserModel.find_by_email(email)
         if not user:
             return {"message": "User not found"}, 404
@@ -89,37 +83,23 @@ class Playlists(Resource):
 class PlaylistSongs(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('song_id', type=int, required=False, help="This field cannot be left blank.")
-    parser.add_argument('playlist_name',
-                        type=str,
-                        required=True,
-                        help="This field cannot be left blank!"
-                        )
-    # parser.add_argument('email',
-    #                     type=str,
-    #                     required=True,
-    #                     help="This field cannot be left blank!"
-    #                     )
-
-    # pošaljem songId i da mi sve playliste u kojima se ona nalazi
-    # pošaljem playlistu i nadje mi sve njezine pjesme
     
-    def get(self, email):
-        data = PlaylistSongs.parser.parse_args();
+    def get(self, email, playlistName):
         user = UserModel.find_by_email(email)
         if not user:
             return {"message": "User not found"}, 404
-        playlist = PlaylistModel.find_by_name(user.id, data["playlist_name"])
+        playlist = PlaylistModel.find_by_name(user.id, playlistName)
         if playlist:
             return {"songs": [song.id for song in playlist.songs.all()]}
         return {"message": "Playlist not found"}, 404
 
-    def post(self, email):
+    def post(self, email, playlistName):
         data = PlaylistSongs.parser.parse_args();
         user = UserModel.find_by_email(email)
         if not user:
             return {'message': 'User not found'}, 404
 
-        playlist = PlaylistModel.find_by_name(user.id, data["playlist_name"])
+        playlist = PlaylistModel.find_by_name(user.id, playlistName)
         if not playlist:
             return {'message': 'Playlist not found.'}, 404
 
@@ -136,12 +116,12 @@ class PlaylistSongs(Resource):
             return {"message": "An error occured upon adding a song into the playlist."}, 500
         return {'message': f'{song.name} added to the playlist "{playlist.name}" successfully.'}, 201
     
-    def delete(self, email):
+    def delete(self, email, playlistName):
         data = PlaylistSongs.parser.parse_args()
         user = UserModel.find_by_email(email)
         if not user:
             return {"message": "User not found"}, 404
-        playlist = PlaylistModel.find_by_name(user.id, data["playlist_name"])
+        playlist = PlaylistModel.find_by_name(user.id, playlistName)
         if not playlist:
             return {'message': 'Playlist not found.'}, 404
         song = SongModel.find_by_id(data['song_id'], user.id)
