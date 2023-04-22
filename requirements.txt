@@ -6,4 +6,3 @@ SQLAlchemy
 flask-cors
 python-dotenv
 firebase-admin
-Flask-Migrate
