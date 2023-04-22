@@ -31,6 +31,8 @@ class Playlists(Resource):
         name = data['playlist_name']
         if not name:
             return {"message": "Playlist name is missing"}, 400
+        if user.userHasBenefits() == False and len(PlaylistModel.find_all_user_playlists(user.id)) >= 4:
+            return {"message": "Limit of playlists exceeded"}, 403
         if PlaylistModel.find_by_name(user.id, name):
             return {"message": "Playlist with that name already exists"}, 400
         playlist = PlaylistModel(name, user.id)
