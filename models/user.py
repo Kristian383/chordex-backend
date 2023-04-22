@@ -23,6 +23,8 @@ class UserModel(db.Model):
         "WebsiteModel", lazy="dynamic", cascade="all,delete", backref="parent")
     notes = db.relationship("UserNotesModel", lazy="dynamic",
                             cascade="all,delete", backref="parent")
+    playlists = db.relationship('PlaylistModel', backref='user', lazy="dynamic", cascade="all,delete")
+     # backref creates pseudo column in the PlaylistModel table where we can get user 
 
     def json(self):
         return {"username": self.username,

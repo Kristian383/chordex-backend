@@ -9,7 +9,6 @@ class SongModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-
     artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
 
     first_key = db.Column(db.String(20))

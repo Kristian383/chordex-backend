@@ -5,14 +5,13 @@ from flask_cors import CORS
 
 from datetime import timedelta
 
-
-# ,User, UserList
 from resources.user import UserRegister,  UserLogin, FirebaseAuth, PasswordReset, DeleteAccount
-from resources.artist import ArtistList #, ArtistUserList
-from resources.song import Song, UsersSongList, MusicKeys, SpotifyInfo  # ,SongList
+from resources.artist import ArtistList
+from resources.song import Song, UsersSongList, MusicKeys, SpotifyInfo
 from resources.website import Website, WebsiteList
 from resources.user_notes import UserNotes
 from resources.mails import ForgotPassword, ContactMe, DeleteAccountRequest
+from resources.playlist import Playlists, PlaylistSongs, SongInPlaylists
 
 from db import db
 import os
@@ -30,7 +29,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 app.config["JWT_SECRET_KEY"] = os.environ.get("SECRET_KEY")
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=14)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=28)
 
 api = Api(app)
 
@@ -70,6 +69,9 @@ api.add_resource(ArtistList, "/artists/<string:email>")
 api.add_resource(MusicKeys, "/keys")
 api.add_resource(UsersSongList, "/songs/<string:email>")
 api.add_resource(Song, "/song/<string:email>")
+api.add_resource(Playlists, "/playlists/<string:email>")
+api.add_resource(PlaylistSongs, "/playlist/<string:email>/<string:playlistName>")
+api.add_resource(SongInPlaylists, "/song-playlists/<string:email>/<int:songId>")
 
 # on iserting and deleting websites
 api.add_resource(Website, "/website/<string:email>")
@@ -81,9 +83,9 @@ api.add_resource(UserNotes, "/notes/<string:email>")
 
 # admin routes
 # api.add_resource(User, "/user/<string:username>")
-# api.add_resource(UserNotesList, "/notes")   #provjera za developera
-# api.add_resource(UserList, "/users") #all users
-# api.add_resource(User, "/user/<int:user_id>")#samo za postman koristim
+# api.add_resource(UserNotesList, "/notes")
+# api.add_resource(UserList, "/users")
+# api.add_resource(User, "/user/<int:user_id>")
 #api.add_resource(SongList, "/songs")
 
 if __name__ == "__main__":
