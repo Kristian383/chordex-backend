@@ -232,7 +232,7 @@ class Song(Resource):
         if not user:
             return {"message": "User with that email doesn't exist"}, 400
 
-        if user.userHasBenefits() == False and user.count_all_user_songs() >= 40:
+        if user.userHasBenefits() == False and user.count_all_user_songs() >= 30:
             return {"message": "Limit of songs exceeded"}, 403
 
         artist = ArtistModel.find_by_name(data["artist"], user.id)
