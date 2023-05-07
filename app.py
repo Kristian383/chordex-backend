@@ -7,7 +7,7 @@ from datetime import timedelta
 
 from resources.user import UserRegister,  UserLogin, FirebaseAuth, PasswordReset, DeleteAccount
 from resources.artist import ArtistList
-from resources.song import Song, UsersSongList, MusicKeys, SpotifyInfo
+from resources.song import Song, UsersSongList, MusicKeys, SpotifyInfo, UsersPaginatedSongList
 from resources.website import Website, WebsiteList
 from resources.user_notes import UserNotes
 from resources.mails import ForgotPassword, ContactMe, DeleteAccountRequest
@@ -41,9 +41,9 @@ cred = credentials.Certificate("./service-account-file.json")
 default_app = firebase_admin.initialize_app(cred)
 
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
+# @app.before_first_request
+# def create_tables():
+#     db.create_all()
 
 
 jwt = JWTManager(app)
@@ -68,6 +68,7 @@ api.add_resource(ArtistList, "/artists/<string:email>")
 
 api.add_resource(MusicKeys, "/keys")
 api.add_resource(UsersSongList, "/songs/<string:email>")
+api.add_resource(UsersPaginatedSongList, "/songs-paginated/<string:email>") # /songs-paginated/<string:email>?offset=10&limit=20
 api.add_resource(Song, "/song/<string:email>")
 api.add_resource(Playlists, "/playlists/<string:email>")
 api.add_resource(PlaylistSongs, "/playlist/<string:email>/<string:playlistName>")

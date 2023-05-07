@@ -6,7 +6,7 @@ from models.artist import ArtistModel
 from models.user import UserModel
 from flask_jwt_extended import jwt_required
 
-# from flask import request
+from flask import request
 import requests
 import os
 from dotenv import load_dotenv
@@ -378,6 +378,23 @@ class UsersSongList(Resource):
             song.json() for song in SongModel.find_all_user_songs(user.id)
         ] 
 
+        for song in songs:
+            artist = ArtistModel.find_by_id(song["artistId"], song["userId"])
+            song["artist"] = artist.name
+        return {"songs": songs}
+
+class UsersPaginatedSongList(Resource):
+    @jwt_required()
+    def get(self, email):
+        user = UserModel.find_by_email(email)
+        offset = request.args.get('offset', default=0, type=int)
+        limit = request.args.get('limit', default=2, type=int)
+        print("offset", offset)
+        if not user:
+            return {"message": "User with that email doesn't exist"}, 400
+        songs = [
+            song.json() for song in SongModel.find_user_songs_paginated(user.id, offset, limit)
+        ] 
         for song in songs:
             artist = ArtistModel.find_by_id(song["artistId"], song["userId"])
             song["artist"] = artist.name

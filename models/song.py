@@ -139,7 +139,10 @@ class SongModel(db.Model):
     @classmethod
     def find_all_user_songs(cls, user_id):
         return cls.query.filter_by(user_id=user_id).order_by(cls.id.desc()).all()
-        # .all()
+
+    @classmethod
+    def find_user_songs_paginated(cls, user_id, offset, limit):
+        return cls.query.filter_by(user_id=user_id).order_by(cls.id.desc()).offset(offset).limit(limit).all()
 
     @classmethod
     def find_all_user_my_songs(cls, user_id):
