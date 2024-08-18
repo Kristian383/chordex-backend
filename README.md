@@ -6,5 +6,5 @@ This repository shows backend code <br>
 Frontend is visible here: https://github.com/Kristian383/chordex-master
 
 
-© Kristian Nenadovic 2022
+© Kristian Nenadovic 2022-
 

@@ -13,7 +13,9 @@ from resources.user_notes import UserNotes
 from resources.mails import ForgotPassword, ContactMe, DeleteAccountRequest
 from resources.playlist import Playlists, PlaylistSongs, SongInPlaylists
 
-from db import db
+# from db import db
+from flask_sqlalchemy import SQLAlchemy
+
 import os
 from dotenv import load_dotenv
 
@@ -21,32 +23,28 @@ import firebase_admin
 from firebase_admin import credentials
 
 
-load_dotenv()
+load_dotenv()  # Load environment variables from a .env file if present
 
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
 app.config["JWT_SECRET_KEY"] = os.environ.get("SECRET_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=28)
 
+# Initialize extensions
+db = SQLAlchemy(app) # TODO
 api = Api(app)
-
 CORS(app)
+jwt = JWTManager(app)
 
 # firebase auth
 cred = credentials.Certificate("./service-account-file.json")
-
 default_app = firebase_admin.initialize_app(cred)
-
 
 # @app.before_first_request
 # def create_tables():
 #     db.create_all()
-
-
-jwt = JWTManager(app)
 
 # ROUTES
 api.add_resource(UserRegister, "/register")
@@ -90,5 +88,5 @@ api.add_resource(UserNotes, "/notes/<string:email>")
 #api.add_resource(SongList, "/songs")
 
 if __name__ == "__main__":
-    db.init_app(app)
+    # db.init_app(app) TODO
     app.run(debug=True, port=5000, host="0.0.0.0")
