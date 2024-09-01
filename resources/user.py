@@ -5,10 +5,10 @@ from models.artist import ArtistModel
 from models.user import UserModel
 # from models.user_notes import UserNotesModel
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_jwt_extended import create_access_token, jwt_required  # (
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity  # (
 # create_access_token,
 # jwt_required,
-# get_jwt_identity
+# 
 # )
 from firebase_admin import auth
 import os
@@ -79,10 +79,10 @@ class UserLogin(Resource):
 
         return {"message": "Invalid Credentials!"}, 401
 
-
-class UserList(Resource):
-    def get(self):
-        return {"users": [user.json() for user in UserModel.find_all()]}
+# ADMIN ROUTE
+# class UserList(Resource):
+#     def get(self):
+#         return {"users": [user.json() for user in UserModel.find_all()]}
 
 
 class DeleteAccount(Resource):
@@ -100,8 +100,12 @@ class DeleteAccount(Resource):
         user = UserModel.verify_authenticity_token(token, email)
 
         if user is None:
-            return {"message": "Your link doesnt work anymore. It could be already used or expired."}, 400
-        #
+            return {"message": "Your link doesn't work anymore. It could be already used or expired."}, 400
+        
+        requested_user_id = get_jwt_identity()
+        if not user.id == requested_user_id:
+            return {"message": "You can only delete your own account."}, 403
+
         try:
             [artist.delete_from_db()
              for artist in ArtistModel.find_all_user_artists(user.id)]
@@ -173,7 +177,7 @@ class FirebaseAuth(Resource):
             return {"message": "Something went wrong on our side. Try again or contact us."}, 500
 
 
-# class User(Resource):  # nece trebati za frontend
+# class User(Resource):
 #     @classmethod
 #     def get(cls, user_id):
 #         user = UserModel.find_by_id(user_id)

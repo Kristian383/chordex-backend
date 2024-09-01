@@ -3,7 +3,8 @@ from email.message import EmailMessage
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 # from werkzeug.security import generate_password_hash
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from werkzeug.security import check_password_hash
 
 import smtplib
 import os
@@ -36,7 +37,7 @@ class ContactMe(Resource):
         msg["Subject"] = "Chordex - Contact me"
         msg["From"] = EMAIL_ADRESS
         msg["To"] = EMAIL_ADRESS
-        content = "From: "+email+"\n\n"+message
+        content = "From: " + email + "\n\n" + message
         msg.set_content(content)
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
             try:
@@ -98,6 +99,10 @@ class DeleteAccountRequest(Resource):
         user = UserModel.find_by_email(email)
         if not user:
             return {"message": "User with that email doesnt exist."}, 400
+
+        requested_user_id = get_jwt_identity()
+        if not user.id == requested_user_id:
+            return {"message": "You can only request account deletion for your own account."}, 403
 
         msg = EmailMessage()
         msg["Subject"] = "Chordex - Deleting account"

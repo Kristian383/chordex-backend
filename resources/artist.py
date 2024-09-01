@@ -1,16 +1,21 @@
 from models.song import SongModel
 from flask_restful import Resource  # , reqparse
-# from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.artist import ArtistModel
 from models.user import UserModel
 # from flask import request
 
-
-class ArtistList(Resource):  # get all users artists with their info
+# get all users artists with their info
+class ArtistList(Resource):
+    @jwt_required()
     def get(self, email):
         user = UserModel.find_by_email(email)
         if not user:
             return {"message": "User with that email doesn't exist"}, 400
+        
+        requested_user_id = get_jwt_identity()
+        if not user.id == requested_user_id:
+            return {"message": "You can only request artists for your own account."}, 403
 
         artists = [artist.getArtistInfo()
                    for artist in ArtistModel.find_all_user_artists(user.id)]

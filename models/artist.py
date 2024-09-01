@@ -2,7 +2,7 @@
 from db import db
 import requests
 from sqlalchemy import func
-
+import logging
 
 class ArtistModel(db.Model):
     __tablename__ = "artist"
@@ -51,24 +51,25 @@ class ArtistModel(db.Model):
         return cls.query.all()
 
     def insertImgUrl(self, token):
-        try:
-            if token == None:
-                return
-            url = "https://api.spotify.com/v1/search?q=artist:" + \
-                self.name+"&type=artist&limit=1"
-            response = requests.get(
-                url, headers={'Authorization': 'Bearer '+token})
-        except:
-            print("COULDNT SAVE IMG_URL FOR ARTIST")
+        if not token:
             return "expired"
-        if response.ok:
-            try:
-                img = response.json()[
-                    "artists"]["items"][0]["images"][1]["url"]
-                self.img_url = img
-                self.save_to_db()
-            except:
-                return
+
+        url = f"https://api.spotify.com/v1/search?q=artist:{self.name}&type=artist&limit=1"
+        headers = {'Authorization': f'Bearer {token}'}
+
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()  
+            
+            data = response.json()
+            img_url = data["artists"]["items"][0]["images"][1]["url"]
+            
+            self.img_url = img_url
+            self.save_to_db()
+
+        except (requests.RequestException, KeyError, IndexError) as e:
+            logging.error(f"Error fetching or processing image URL: {e}")
+            return "expired"
 
     @classmethod
     def find_all_user_artists(cls, user_id):

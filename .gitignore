@@ -1,4 +1,14 @@
-__pycache__
+# Ignore Python bytecode files
+__pycache__/
 *.pyc
+*.pyo
+*.pyd
+# Ignore Python bytecode files in subdirectories
+**/__pycache__/
+
 service-account-file.json
 .env
+*.db
+
+# Ignore the virtual environment directory
+venv/
